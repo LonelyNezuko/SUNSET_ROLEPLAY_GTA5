@@ -1,0 +1,54 @@
+const logger = require('../modules/logger')
+try
+{
+    const container = {}
+    container.data = {
+        user: {}
+    }
+
+    container.has = (type, id, key) =>
+    {
+        if(container.data[type][id] === undefined
+            || container.data[type][id][key] === undefined)return false
+
+        return true
+    }
+    container.get = (type, id, key) =>
+    {
+        if(!container.has(type, id, key))return null
+        return container.data[type][id][key]
+    }
+    container.set = (type, id, key, value) =>
+    {
+        try
+        {
+            if(!container.data[type][id]) container.data[type][id] = {}
+            container.data[type][id][key] = value
+        }
+        catch(e)
+        {
+            logger.error('container.set', e)
+        }
+
+        return true
+    }
+    container.delete = (type, id) =>
+    {
+        delete container.data[type][id]
+    }
+    container.clear = (type, id, key) =>
+    {
+        if(container.has(type, id, key)) delete container.data[type][id][key]
+    }
+    container.getAll = (type, id) =>
+    {
+        if(!container.data[type][id])return null
+        return container.data[type][id]
+    }
+
+    module.exports = container
+}
+catch(e)
+{
+    logger.error('container.js', e)
+}

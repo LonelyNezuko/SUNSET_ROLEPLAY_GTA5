@@ -1,0 +1,40 @@
+.input-code
+{
+    position: relative;
+
+    max-width: 330px;
+    min-width: 250px;
+}
+.input-code h5
+{
+    text-align: center;
+    margin-bottom: 10px;
+}
+.input-code section
+{
+    width: calc(100%);
+
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+}
+.input-code section input
+{
+    width: 60px;
+    height: 55px;
+
+    margin: 0 10px;
+    background-color: transparent;
+
+    border: 1px solid rgb(124, 124, 124);
+    border-radius: 4px;
+
+    outline: none;
+    text-align: center;
+
+    caret-color: transparent;
+    color: white;
+
+    font-size: 25px;
+    text-transform: uppercase;
+}

@@ -1,0 +1,21 @@
+#choiceRole
+{
+    position: fixed;
+
+    top: 0;
+    left: 0
+
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    align-items: center;
+}
+#choiceRole .choiceRole-elem
+{
+    width: calc(100% / 3 + 120px);
+    height: calc(100% - 80px);
+
+    clip-path: polygon(4% 0, 100% 0, 96% 100%, 0% 100%);
+    padding: 40px;
+}

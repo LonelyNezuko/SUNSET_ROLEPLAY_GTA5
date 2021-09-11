@@ -1,0 +1,608 @@
+#hud
+{
+    position: fixed;
+
+    width: 100vw;
+    height: 100vh;
+
+    top: 0;
+    left: 0;
+}
+#hud.hud-hide-all
+{
+    display: none;
+}
+
+#hud .logo
+{
+    width: 300px;
+    height: auto;
+
+    position: absolute;
+
+    top: 10px;
+    left: 10px;
+}
+#hud.hud-hide-all .logo
+{
+    display: none;
+}
+#hud .logo svg
+{
+    width: 50px;
+    height: auto;
+}
+#hud .logo .online
+{
+    position: absolute;
+
+    top: 2px;
+    left: calc(10px + 50px);
+
+    background-color: rgb(253, 166, 5, .5);
+
+    display: flex;
+    align-items: center;
+
+    padding: 3px 7px;
+    border-radius: 10px;
+}
+#hud .logo .online svg
+{
+    width: 20px;
+    height: 20px;
+
+    fill: #896014;
+}
+#hud .logo .online span
+{
+    margin-left: 5px;
+    color: #896014;
+
+    font-size: 12px;
+}
+#hud .logo h3
+{
+    position: absolute;
+
+    top: calc(10px + 23px);
+    left: calc(10px + 50px);
+
+    font-size: 17px;
+    color: white;
+
+    text-transform: uppercase;
+}
+#hud .logo .stock
+{
+    position: absolute;
+
+    top: 56px;
+    left: 15px;
+
+    overflow: hidden;
+
+    background-color: #50aa6e;
+    color: white;
+
+    font-size: 14px;
+    border-radius: 7px;
+
+    padding: 3px 6px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#hud .logo .stock span
+{
+    font-size: 16px;
+}
+
+#hud .cash
+{
+    position: absolute;
+
+    right: 10px;
+    top: 10px;
+
+    color: white;
+}
+#hud.hud-hide .cash,
+#hud.hud-hide-all .cash
+{
+    display: none;
+}
+#hud .cash section
+{
+
+}
+#hud .cash section h4,
+#hud .cash section h4 span
+{
+    font-size: 24px;
+    text-align: right;
+
+    color: #69e840;
+}
+#hud .cash section h4 span
+{
+    color: white;
+}
+#hud .cash section div,
+#hud .cash section div span
+{
+    text-align: right;
+    font-size: 18px;
+}
+#hud .cash section div
+{
+    color: #69e840;
+    opacity: 0;
+}
+
+#hud .speedometer
+{
+    width: 270px;
+    height: 270px;
+
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, .2);
+
+    overflow: hidden;
+    position: absolute;
+
+    bottom: 10px;
+    right: 10px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    display: none;
+}
+#hud.hud-speedometer .speedometer
+{
+    display: flex;
+}
+#hud.hud-hide .speedometer,
+#hud.hud-hide-all .speedometer
+{
+    display: none;
+}
+#hud .speedometer .speed
+{
+    width: 90%;
+    height: 90%;
+
+    border-radius: 50%;
+    overflow: hidden;
+
+    position: relative;
+}
+#hud .speedometer .speed span
+{
+    position: absolute;
+
+    font-size: 18px;
+    color: #797979;
+
+    text-align: center;
+}
+#hud .speedometer .speed span.speed-numbers
+{
+    transition: .3s;
+}
+#hud .speedometer .speed svg
+{
+    transform: rotate(150deg);
+}
+#hud .speedometer .speed svg circle
+{
+    stroke: transparent;
+    stroke-width: 2px;
+
+    stroke-dasharray: 189;
+    /*
+        -189
+        -273
+    */
+
+    fill: transparent;
+    transition: fill .3s;
+}
+#hud .speedometer.speedometer-on .speed svg circle
+{
+    stroke: rgb(255, 205, 112);
+}
+#hud .speedometer .speed .count
+{
+    position: absolute;
+
+    top: 60px;
+    left: 50%;
+
+    transform: translateX(-50%);
+}
+#hud .speedometer .speed .count h4
+{
+    position: relative;
+    color: transparent;
+
+    font-size: 40px;
+    transition: color .3s;
+}
+#hud .speedometer.speedometer-on .speed .count h4
+{
+    color: rgb(255, 205, 112);
+}
+#hud .speedometer .speed .count span
+{
+    font-size: 14px;
+    text-align: center;
+
+    left: 50%;
+    top: 40px;
+
+    transform: translateX(-50%);
+
+    white-space: nowrap;
+}
+#hud .speedometer .speed .stats
+{
+    position: absolute;
+
+    top: 140px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#hud .speedometer .speed .stats svg
+{
+    margin: 0 5px;
+
+    width: 25px;
+    height: 25px;
+
+    transform: rotate(0);
+    fill: #797979;
+
+    transition: .3s;
+}
+#hud .speedometer.speedometer-on .speed .stats svg.on
+{
+    fill: #d1ac68;
+}
+#hud .speedometer .speed .mileage
+{
+    position: absolute;
+
+    top: 177px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    font-size: 14px;
+
+    display: flex;
+    align-items: flex-end;
+
+    background-color: #5e5c5c;
+    padding: 4px 9px;
+
+    color: transparent;
+    border-radius: 5px;
+    transition: .3s;
+}
+#hud .speedometer .speed .mileage svg
+{
+    width: 20px;
+    height: 20px;
+
+    transform: rotate(0);
+    margin-left: 5px;
+
+    fill: transparent;
+    transition: .3s;
+}
+#hud .speedometer .speed .mileage span
+{
+    position: relative;
+
+    font-size: 15px;
+    color: #a28349;
+
+    color: transparent;
+    transition: .3s;
+}
+#hud .speedometer.speedometer-on .speed .mileage
+{
+    color: #797979;
+}
+#hud .speedometer.speedometer-on .speed .mileage svg
+{
+    fill: #a28349;
+}
+#hud .speedometer.speedometer-on .speed .mileage span
+{
+    color: #a28349;
+}
+
+#hud .notify
+{
+    position: absolute;
+
+    bottom: 30px;
+    left: 50%;
+
+    transform: translateX(-50%) rotate(-2deg);
+
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column-reverse;
+
+    width: 700px;
+    transition: .3s;
+}
+#hud .notify section
+{
+    width: calc(700px - 40px - 30px);
+    background-color: white;
+
+    padding: 10px 20px;
+    padding-right: calc(20px + 25px + 5px);
+
+    position: relative;
+
+    border-radius: 4px;
+    clip-path: polygon(0 0, 98% 0, 100% 100%, 2% 100%);
+
+    opacity: 0;
+    bottom: -30px;
+}
+#hud .notify section + section
+{
+    margin-bottom: 10px;
+}
+#hud .notify section span
+{
+    width: 100%;
+    text-align: center;
+}
+#hud .notify svg
+{
+    position: absolute;
+
+    width: 22px;
+    height: 22px;
+
+    right: 20px;
+    top: 50%;
+
+    transform: translateY(-50%);
+    fill: white;
+}
+#hud .notify section.notify-warning
+{
+    background-color: #668ee9;
+    color: white;
+}
+#hud .notify section.notify-error
+{
+    background-color: #e96666;
+    color: white;
+}
+#hud .notify section.notify-info
+{
+    background-color: #c4b829;
+    color: white;
+}
+
+
+#hud .chat
+{
+    position: absolute;
+
+    top: 100px;
+    left: 10px;
+
+    width: 600px;
+
+    border-radius: 4px;
+    overflow: hidden;
+
+    transition: .3s;
+}
+#hud.hud-hide .chat,
+#hud.hud-hide-all .chat,
+#hud .chat.chat-hide
+{
+    display: none;
+}
+#hud .chat.chat-timeout
+{
+    opacity: .5;
+}
+#hud .chat .chat-body
+{
+    width: calc(100% - 20px);
+    height: calc(380px - 50px - 20px - 30px - 20px);
+
+    color: white;
+
+    padding: 10px;
+    color: #222;
+
+    overflow-y: hidden;
+    transition: .3s;
+}
+#hud .chat.chat-opened .chat-body
+{
+    background-color: rgb(51, 51, 51, .5);
+    overflow-y: auto;
+
+    color: white;
+}
+#hud .chat .chat-body::-webkit-scrollbar
+{
+    display: none;
+}
+#hud .chat.chat-opened .chat-body:hover::-webkit-scrollbar
+{
+    display: block;
+}
+#hud .chat .chat-body section
+{
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    position: relative;
+}
+#hud .chat .chat-body section + section
+{
+    margin-top: 5px;
+}
+#hud .chat .chat-body section h1
+{
+    margin-right: 5px;
+
+    position: absolute;
+    top: 0;
+
+    color: white;
+}
+#hud .chat .chat-body section span
+{
+    color: white;
+}
+#hud .chat .chat-body section:not(.chat-notimestamp) span
+{
+    text-indent: 65px;
+}
+#hud .chat .chat-body section svg
+{
+    width: 20px;
+    height: 20px;
+
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+#hud .chat .chat-action
+{
+    opacity: 0;
+    visibility: hidden;
+    z-index: -1;
+
+    transition: .3s;
+    padding: 10px;
+
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    background-color: rgb(51, 51, 51, .5);
+}
+#hud .chat.chat-opened .chat-action
+{
+    opacity: 1;
+    visibility: visible;
+    z-index: 1;
+}
+#hud .chat .chat-action button
+{
+    height: 100%;
+    padding: 8px 10px;
+
+    background-color: transparent;
+    border: 1px solid silver;
+
+    outline: none;
+    color: white;
+
+    margin: 5px;
+    border-radius: 4px;
+
+    opacity: .5;
+    cursor: pointer;
+}
+#hud .chat .chat-action button.select
+{
+    background-color: #fd9c05;
+    border-color: transparent;
+
+    opacity: 1;
+}
+
+#hud .chat .chat-input
+{
+    height: 50px;
+    position: relative;
+
+    opacity: 0;
+    visibility: hidden;
+    z-index: -1;
+
+    transition: .3s;
+}
+#hud .chat.chat-opened .chat-input
+{
+    opacity: 1;
+    visibility: visible;
+    z-index: 1;
+}
+#hud .chat .chat-input input
+{
+    width: 100%;
+    height: 100%;
+
+    padding: 0 10px;
+    padding-right: 40px;
+
+    outline: none;
+    border: 0;
+
+    background-color: rgb(85, 85, 85, .5);
+    transition: .3s;
+
+    color: white;
+}
+#hud .chat .chat-input input::placeholder
+{
+    font-size: 12px;
+    transition: .3s;
+}
+#hud .chat .chat-input input:focus
+{
+    background-color: rgb(136, 136, 136, .5);
+}
+#hud .chat .chat-input input:focus + svg
+{
+    fill: rgb(85, 85, 85);
+}
+#hud .chat .chat-input input:focus::placeholder
+{
+    color: rgb(153, 153, 153);
+}
+#hud .chat .chat-input svg
+{
+    width: 20px;
+    height: 20px;
+
+    position: absolute;
+
+    top: 50%;
+    right: 10px;
+
+    transform: translateY(-50%);
+    fill: rgb(136, 136, 136);
+
+    transition: .3s;
+    cursor: pointer;
+}

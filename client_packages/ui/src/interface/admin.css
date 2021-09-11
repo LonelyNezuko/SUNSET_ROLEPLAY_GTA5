@@ -1,0 +1,253 @@
+#admin
+{
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    background-color: rgb(51, 51, 51, .5);
+
+    width: 100vw;
+    height: 100vh;
+
+    color: white;
+}
+
+#admin .login
+{
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    display: none;
+}
+#admin .login.login-show
+{
+    display: flex;
+}
+#admin .login section
+{
+    background-color: rgb(51, 51, 51, .2);
+
+    padding: 30px;
+    border-radius: 8px;
+}
+#admin .login h1
+{
+    font-size: 25px;
+    text-align: center;
+
+    margin-bottom: 70px;
+    text-transform: uppercase;
+}
+#admin .login .input
+{
+    margin: 0 auto
+}
+#admin .login .btn
+{
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+
+    margin-top: 30px;
+}
+
+
+#admin header
+{
+    width: calc(100% - 200px);
+    height: 140px;
+
+    border-bottom: 3px solid #ffb86a;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 100px;
+}
+#admin header section:first-child h1
+{
+    font-size: 35px;
+    text-transform: uppercase;
+
+    font-family: 'Pangolin', cursive;
+}
+#admin header section:first-child span
+{
+    color: #ffb86a;
+
+    font-size: 20px;
+}
+#admin header section:last-child
+{
+    display: flex;
+    align-items: center;
+}
+#admin header section:last-child button
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: transparent;
+    border: 1px solid white;
+
+    padding: 7px 15px;;
+    min-width: auto;
+}
+#admin header section:last-child button:hover
+{
+    background-color: #ffb86a;
+    border-color: transparent;
+}
+#admin header section:last-child button:focus
+{
+    background-color: #d99e5d;
+}
+#admin header section:last-child button span
+{
+    color: white;
+    font-size: 14px;
+}
+#admin header section:last-child button svg
+{
+    width: 20px;
+    height: 20px;
+
+    margin-left: 15px;
+    fill: white;
+}
+#admin header section:last-child .item
+{
+    margin-right: 30px;
+    fill: white;
+
+    position: relative;
+
+    cursor: pointer;
+
+    padding: 15px;
+    border-radius: 50%;
+
+    transition: .3s;
+}
+#admin header section:last-child .item:hover,
+#admin header section:last-child .item.select
+{
+    background-color: rgb(119, 119, 119, .5);
+}
+#admin header section:last-child .item:before
+{
+    position: absolute;
+
+    display: block;
+    content: "";
+
+    width: 2px;
+    height: 40%;
+
+    background-color: silver;
+
+    right: -15px;
+    top: 50%;
+
+    transform: translateY(-50%);
+}
+#admin header section:last-child .item svg
+{
+    width: 25px;
+    height: 25px;
+}
+#admin header section:last-child .item span
+{
+    position: absolute;
+
+    background-color: #ff8080;
+
+    min-width: 15px;
+    min-height: 15px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 10px;
+
+    bottom: 0;
+    right: 0;
+
+    padding: 4px;
+}
+
+
+#admin .wrap
+{
+    height: calc(100% - 140px);
+    position: relative;
+}
+#admin .wrap nav
+{
+    width: calc(100% - 70px);
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    padding: 30px 35px;
+}
+#admin .wrap nav button
+{
+    background-color: transparent;
+
+    border-bottom: 2px solid #777;
+    border-radius: 0;
+
+    padding: 0 20px;
+}
+#admin .wrap nav button.select,
+#admin .wrap nav button:hover
+{
+    border-color: #ffb86a;
+}
+
+#admin .wrap .body
+{
+    background-color: rgb(119, 119, 119);
+    margin: 0 40px;
+
+    border-radius: 4px;
+
+    min-height: 50px;
+    max-height: calc(100% - 60px - 90px);
+
+    width: calc(100% - 80px);
+    overflow-x: auto;
+
+    display: flex;
+}
+#admin .wrap .body-arrow
+{
+    position: absolute;
+
+    top: 107px;
+    left: 102px;
+
+    background-color: rgb(119, 119, 119);
+
+    width: 35px;
+    height: 35px;
+
+    border-radius: 4px;
+    transform: rotate(45deg);
+}

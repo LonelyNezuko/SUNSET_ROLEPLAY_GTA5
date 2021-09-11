@@ -1,0 +1,422 @@
+@import './modules/loading.css';
+@import './modules/inputCode.css';
+
+@import './interface/hud.css';
+@import './interface/inventory.css';
+@import './interface/join.css';
+@import './interface/userCreate.css';
+@import './interface/menu.css';
+@import './interface/choiceRole.css';
+@import './interface/menuList.css';
+@import './interface/admin.css';
+
+@import url('https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Pangolin&display=swap');
+
+/*
+    �������
+    font-family: 'Balsamiq Sans', cursive;
+
+    ������
+    font-family: 'Pangolin', cursive;
+*/
+
+*, html, body
+{
+	padding: 0;
+	margin: 0;
+
+	font-family: 'Balsamiq Sans', cursive;
+	font-size: 13px;
+}
+body
+{
+    position: relative;
+
+    overflow: hidden;
+
+    width: 100vw;
+    height: 100vh;
+}
+*
+{
+	user-select: none;
+}
+svg
+{
+	width: 30px;
+	height: 30px;
+}
+
+.input,
+.input-code,
+.input-date
+{
+    position: relative;
+
+    width: 330px;
+}
+.input input,
+.input-date input
+{
+    width: 100%;
+
+    padding: 20px 20px;
+    padding-top: 25px;
+
+    background-color: transparent;
+
+    border: 0;
+    outline: 0;
+
+    caret-color: white;
+
+    border: 1px solid rgb(124, 124, 124);
+    border-radius: 4px 8px 4px 8px;
+
+    transition: .2s;
+    color: white;
+}
+.input label
+{
+    position: absolute;
+
+    left: 20px;
+    top: 50%;
+
+    transform: translateY(-50%);
+    cursor: text;
+
+    color: rgb(173, 173, 173);
+    transition: .2s;
+}
+.input svg
+{
+    width: 15px;
+    height: 15px;
+
+    position: absolute;
+
+    top: 50%;
+    right: 20px;
+
+    transform: translateY(-50%);
+    fill: rgb(173, 173, 173);
+
+    transition: .2s;
+}
+.input input:focus ~ label,
+.input input:not(:placeholder-shown) ~ label
+{
+    top: 15px;
+    font-size: 10px;
+}
+.input input:not(:disabled):focus ~ label,
+.input input:not(:disabled):not(:placeholder-shown) ~ label
+{
+    color: white;
+}
+.input input:not(:disabled):focus ~ svg,
+.input input:not(:disabled):not(:placeholder-shown) ~ svg
+{
+    fill: white;
+}
+.input input:not(:disabled):focus,
+.input input:not(:disabled):not(:placeholder-shown),
+.input-date input:not(:disabled):focus,
+.input-date input:not(:disabled):not(:placeholder-shown)
+{
+    border-color: rgb(173, 173, 173);
+}
+.input input:disabled ~ label
+{
+    cursor: default;
+}
+.input input:disabled
+.input-date input:disabled
+{
+    color: rgb(173, 173, 173);
+}
+.input span,
+.input-date span
+{
+    position: absolute;
+
+    left: 20px;
+    bottom: -21px;
+
+    font-size: 11px;
+    color: #ff8585;
+}
+.input input:not(:disabled).input-error,
+.input-date input:not(:disabled).input-error
+{
+    animation: input-error .8s linear;
+}
+.input input:not(:disabled).input-error:focus,
+.input input:not(:disabled):not(:placeholder-shown).input-error,
+.input-date input:not(:disabled).input-error:focus,
+.input-date input:not(:disabled):not(:placeholder-shown).input-error
+{
+    animation: input-error-focus .8s linear;
+}
+
+@keyframes input-error
+{
+    25%, 75%
+    {
+        border-color: #ff8585;
+    }
+    0%, 50%, 100%
+    {
+        border-color: rgb(124, 124, 124);
+    }
+}
+@keyframes input-error-focus
+{
+    25%, 75%
+    {
+        border-color: #ff8585;
+    }
+    0%, 50%, 100%
+    {
+        border-color: rgb(173, 173, 173);
+    }
+}
+
+.input-date
+{
+    display: flex;
+    justify-content: space-around;
+    align-content: center;
+    flex-wrap: wrap;
+}
+.input-date h5
+{
+    width: 100%;
+    text-align: center;
+
+    margin-bottom: 10px;
+}
+.input-date input
+{
+    width: calc(100% / 3 - 15px);
+    height: 50px;
+
+    padding: 0;
+    text-align: center;
+
+    border-radius: 3px;
+}
+.input-date input::placeholder
+{
+    transition: .2s;
+    color: rgb(173, 173, 173);
+}
+.input-date input:focus::placeholder
+{
+    color: transparent;
+}
+.input-date span
+{
+    position: static;
+
+    text-align: center;
+    width: 100%;
+
+    margin-top: 10px;
+}
+.input-date .button
+{
+    min-height: 35px;
+    background-color: transparent;
+
+    border: 1px solid rgb(124, 124, 124);
+}
+
+.input-range + .input-range
+{
+    margin-top: 15px;
+}
+.input-range h5
+{
+    text-align: center;
+    margin-bottom: 10px;
+
+    font-size: 16px;
+}
+.input-range span
+{
+    font-size: 14px;
+}
+.input-range span:first-child
+{
+    margin-right: 10px;
+}
+.input-range span:last-child
+{
+    margin-left: 10px;
+}
+.input-range section
+{
+    display: flex;
+}
+.input-range input
+{
+    -webkit-appearance: none;
+    outline: none;
+
+    width: 100%;
+    background-color: transparent;
+}
+.input-range input::-webkit-slider-thumb
+{
+    -webkit-appearance: none;
+
+    background-color: rgb(253, 166, 5);
+
+    width: 20px;
+    height: 20px;
+
+    border-radius: 50%;
+    cursor: pointer;
+
+    position: relative;
+
+    top: -8px;
+}
+.input-range input::-webkit-slider-runnable-track
+{
+    height: 4px;
+
+    border-radius: 20px;
+    cursor: pointer;
+
+    background-color: rgb(124, 124, 124);
+}
+
+input[type="checkbox"]
+{
+	-webkit-appearance: none;
+
+	width: 20px;
+	height: 20px;
+
+	border: 1px solid silver;
+	border-radius: 2px;
+
+	cursor: pointer;
+	position: relative;
+
+	transition: .3s;
+}
+input[type="checkbox"]:before
+{
+	display: block;
+	content: "";
+
+	position: absolute;
+
+	top: 50%;
+	left: 50%;
+
+	transform: translate(-50%, -50%);
+
+	width: 70%;
+	height: 70%;
+
+	border-radius: 2px;
+	background-color: #fd9d33;
+
+	opacity: 0;
+	visibility: hidden;
+	z-index: -1;
+
+	transition: .3s;
+}
+input[type="checkbox"]:checked
+{
+	border-color: #fd9d33;
+}
+input[type="checkbox"]:checked:before
+{
+	opacity: 1;
+	visibility: visible;
+	z-index: 1;
+}
+input[type="checkbox"] + label
+{
+	transition: .3s;
+}
+input[type="checkbox"]:checked + label
+{
+	color: #fd9d33;
+}
+
+
+.button
+{
+    border: 0;
+    outline: 0;
+
+    color: white;
+    background-color: rgb(205, 134, 3);
+
+    min-width: 150px;
+    min-height: 50px;
+
+    border-radius: 4px;
+    cursor: pointer;
+
+    transition: .2s;
+    margin: 7px;
+
+    position: relative;
+}
+.button.button-select
+{
+    background-color: rgb(205, 134, 3);
+    border-color: transparent;
+}
+.button:focus
+{
+    background-color: rgb(169, 119, 27);
+}
+.button:disabled
+{
+    background-color: rgb(118, 82, 17);
+    color: rgb(143, 143, 143);
+}
+
+::-webkit-scrollbar
+{
+	height: 12px;
+	width: 4px;
+}
+::-webkit-scrollbar-track
+{
+	background-color: transparent;
+}
+::-webkit-scrollbar-thumb
+{
+	background-color: rgb(255, 205, 112);
+	border-radius: 30px;
+}
+
+
+.new
+{
+    background-color: rgb(26, 179, 116);
+    position: absolute;
+
+    right: 0;
+    top: 0;
+
+    padding: 5px 10px;
+    border-radius: 4px;
+
+    z-index: 5;
+    opacity: .6;
+
+    transform: rotate(15deg);
+    color: white;
+}
