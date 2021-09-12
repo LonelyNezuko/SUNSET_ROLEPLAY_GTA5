@@ -40,6 +40,7 @@ try
 
 			container.set('user', player.id, 'lastDate', new Date())
 
+			if(container.get('user', player.id, 'choiceRole') === 0)return user.choiceRole(player)
 			user.spawn(player)
 		})
 	}
@@ -95,7 +96,7 @@ try
 		})
 	}
 
-	user.spawn = (player, defaultSpawn = false) =>
+	user.spawn = (player, defaultSpawn = false, roleSpawn = false) =>
 	{
 		try
 		{
@@ -110,7 +111,16 @@ try
 				&& !defaultSpawn) user.setPos(player, container.get('user', player.id, 'position').x, container.get('user', player.id, 'position').y, container.get('user', player.id, 'position').z, container.get('user', player.id, 'position').a, container.get('user', player.id, 'position').vw)
 			else
 			{
-				const spawn = enums.defaultSpawn[func.random(0, enums.defaultSpawn.length - 1)]
+				let spawn
+				if(roleSpawn
+					&& container.get('user', player.id, 'choiceRole') !== 0)
+				{
+					const depSpawn = enums.roleSpawn[container.get('user', player.id, 'choiceRole') - 1]
+					logger.log('', depSpawn)
+					spawn = depSpawn[func.random(0, depSpawn.length - 1)]
+				}
+				else spawn = enums.defaultSpawn[func.random(0, enums.defaultSpawn.length - 1)]
+
 				user.setPos(player, spawn[0], spawn[1], spawn[2], spawn[3], spawn[4])
 			}
 		}
@@ -118,6 +128,14 @@ try
 		{
 			logger.error('user.spawn', e)
 		}
+	}
+
+	user.choiceRole = player =>
+	{
+		if(container.get('user', player.id, 'choiceRole') !== 0)return user.spawn(player)
+
+		user.setPos(player, 218.12791442871094, -1139.1434326171875, 29.29643440246582, 98.06212615966797, player.id + 1)
+		setTimeout(() => player.call('server::user:choiceRole'), 1000)
 	}
 
 	user.createCharacter = (player) =>
@@ -207,6 +225,71 @@ try
 		if(!user.isLogged(player))return false
 		return true
 	}
+
+	user.setCash = (player, cash) =>
+	{
+		if(!user.isLogged(player))return
+
+		container.set('user', player.id, 'cash', parseFloat(cash))
+
+		user.updateHud(player)
+		user.save(player)
+	}
+	user.getCash = player =>
+	{
+		if(!user.isLogged(player))return 0
+		return container.get('user', player.id, 'cash')
+	}
+
+	user.giveCash = (player, cash) =>
+	{
+		if(!user.isLogged(player))return
+		user.setCash(player, user.getCash(player) + cash)
+	}
+
+
+	user.getPlayer = id =>
+	{
+		let player
+		mp.players.forEach(pl =>
+		{
+			if(user.isLogged(pl)
+				&& pl.id === id) player = pl
+		})
+		return player
+	}
+
+	// inventory
+	// user.inventory = {}
+	//
+	// user.inventory.add = (player, itemHash, quantity = 1, data = {}) =>
+	// {
+	// 	if(!user.isLogged(player))return
+	//
+	// 	const userINV = container.get('user', player.id, 'inventory')
+	// 	if(!userINV) userINV = []
+	//
+	// 	const item = enums.inventory.getItem(itemHash)
+	// 	if(!item)return
+	//
+	// 	function addItem(_quan = quantity) =>
+	// 	{
+	// 		userINV.push({
+	// 			itemHash: itemHash,
+	// 			quantity: _quantity,
+	// 			data: data
+	// 		})
+	// 	}
+	//
+	// 	if(item.maxQuantity > 1)
+	// 	{
+	//
+	// 	}
+	// 	else
+	// 	{
+	//
+	// 	}
+	// }
 
 	module.exports = user
 }

@@ -30,6 +30,14 @@ try
         return Math.abs(Math.sqrt(Math.pow((pos2.x - pos1.x),2) + Math.pow((pos2.y - pos1.y),2)))
     }
 
+    func.formatCash = (cash, str = "$") =>
+    {
+        const formating = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'})
+        return str + " " + formating.format(cash).replace('$', '')
+    }
+
     module.exports = func
 }
 catch(e)

@@ -18,7 +18,7 @@ try
     {
         if(!user.isLogged(player))return
 
-        const formatText = container.get('user', player.id, 'username') + ` [${player.id}]` + ` говорит: ${text}`
+        const formatText = container.get('user', player.id, 'charname') + ` [${player.id}]` + ` говорит: ${text}`
         mp.players.forEach(pl =>
         {
             if(user.isLogged(pl)

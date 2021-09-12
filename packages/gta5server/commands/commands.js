@@ -7,6 +7,9 @@ try
 	const user = require('../user')
 	const chat = require('../chat')
 
+	const container = require('../modules/container')
+	const func = require('../modules/func')
+
 	mp.events.add({
 		'client::goCommand': (player, command, args) =>
 		{
@@ -17,8 +20,8 @@ try
 		'command::savepos': (player, name = '') =>
 		{
 			fs.appendFile('saved/positions.txt', `${player.position.x}, ${player.position.y}, ${player.position.z}, ${player.heading} // ${name}\r\n`, (error) => {
-		        if(error) user.notify(player, `~r~Save Position Error: ~w~${err.message}`);
-		        else user.notify(player, `~g~Position saved. ~w~(${name})`);
+		        if(error) user.notify(player, `Save Position Error: ${err.message}`);
+		        else user.notify(player, `Position saved. (${name})`);
 		    })
 		},
 		'command::tppos': (player, position, [ x, y, z ]) =>
@@ -45,6 +48,24 @@ try
 		'command::getint': player =>
 		{
 			player.call('server::user:getint')
+		},
+
+		'command::givecash': (player, str, [ id, cash ]) =>
+		{
+			logger.log('', str, id, cash)
+
+			if(!str.length
+				|| id === undefined
+				|| cash === undefined)return user.notify(player, '/givecash [id] [cash]', 'error')
+
+			id = parseInt(id)
+			cash = parseFloat(cash)
+
+			const target = user.getPlayer(id)
+			if(!target)return user.notify(player, 'Игрок не найден или не авторизован', 'error')
+
+			user.giveCash(target, cash)
+			user.notify(player, `Вы изменили баланс ${container.get('user', target.id, 'charname')}: ${func.formatCash(user.getCash(target))}`)
 		}
 	})
 }

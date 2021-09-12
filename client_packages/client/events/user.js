@@ -9,6 +9,34 @@ try
 	const func = require('./client/modules/func')
 
 	mp.events.add({
+		'server::user:joinShow': username =>
+		{
+			if(mp.storage.data.authRemember !== undefined)
+			{
+				ui.call('UI::join', {
+					cmd: "remember",
+					data: mp.storage.data.authRemember
+				})
+			}
+
+			ui.call('UI::join', {
+				cmd: "toggle",
+				data: true
+			})
+			user.cursor(true, false)
+
+			if(mp.storage.data.authRemember !== undefined
+				&& mp.storage.data.authRemember.autoLogin === true)
+			{
+				setTimeout(() =>
+				{
+					ui.call('UI::join', {
+						cmd: "autoLogin"
+					})
+				}, 500)
+			}
+		},
+
 		'server::user:toggleHUD': toggle =>
 		{
 			user.toggleHud(toggle)
@@ -142,6 +170,44 @@ try
 		'server::user:userCreateError': () =>
 		{
 			ui.call('UI::userCreate:errorCharName')
+		},
+
+		'server::user:choiceRole': () =>
+		{
+			user.toggleHud(false)
+			user.cursor(true, false)
+
+			mp.players.local.freezePosition(true)
+			user.setCamera(new mp.Vector3(155.412109375, -1070.2464599609375, 269.3681945800781), [ 47.71329116821289, -462.1255187988281, 93.9698715209961 ])
+
+			ui.call('UI::choiceRole', {
+				cmd: 'toggle',
+				data: true
+			})
+		},
+		'ui::choiceRole': data =>
+		{
+			try
+			{
+				logger.log('ui::choiceRole', data)
+
+				user.cursor(false, true)
+				mp.players.local.freezePosition(false)
+
+				user.destroyCamera()
+
+				ui.call('UI::choiceRole', {
+					cmd: 'toggle',
+					data: false
+				})
+
+				data = JSON.parse(data)
+				mp.events.callRemote('client::user:choiceRole', data.id)
+			}
+			catch(e)
+			{
+				logger.error('ui::choiceRole', e)
+			}
 		}
 	})
 }

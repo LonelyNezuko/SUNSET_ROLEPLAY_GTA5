@@ -348,7 +348,6 @@ $(document).ready(() =>
             }
             case 'authLogin':
             {
-                join.wrap('auth')
                 join.go()
                 break
             }
