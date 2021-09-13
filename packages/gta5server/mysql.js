@@ -8,12 +8,21 @@ try
 
     mysql.connect = async (callback) =>
     {
-        mysql.connection = await mysql2.createConnection({
-            host: 'localhost',
-            user: 'root',
-            database: 'gta5server'
-        })
-        callback()
+        try
+        {
+            mysql.connection = await mysql2.createConnection({
+                host: 'localhost',
+                user: 'root',
+                database: 'gta5server'
+            })
+            callback()
+
+            logger.log('MySQL connection: OK!')
+        }
+        catch(e)
+        {
+            logger.error('MySQL connection: ERROR!', e)
+        }
     }
     mysql.query = (query, args = [], callback = null) =>
     {

@@ -48,45 +48,20 @@ try
                 setTimeout(() =>
                 {
                     container.set('user', player.id, 'skin', data.settings)
-                    container.set('user', player.id, 'gender', data.gender)
 
-                    container.set('user', player.id, 'charname', data.firstName + ' ' + data.lastName)
+                    if(container.get('user', player.id, 'userCreate') === 0)
+                    {
+                        container.set('user', player.id, 'userCreate', 1)
+                        container.set('user', player.id, 'gender', data.gender)
 
-                    logger.log('', data.dateBirth)
-                    container.set('user', player.id, 'dateBirth', data.dateBirth)
-
-                    if(container.get('user', player.id, 'userCreate') === 0) container.set('user', player.id, 'userCreate', 1)
+                        container.set('user', player.id, 'charname', data.firstName + ' ' + data.lastName)
+                        container.set('user', player.id, 'dateBirth', data.dateBirth)
+                    }
 
                     user.spawn(player)
                     setTimeout(() => user.save(player), 2000)
                 }, 1000)
             })
-        },
-        'client::user:choiceRole': (player, id) =>
-        {
-            container.set('user', player.id, 'choiceRole', id)
-
-            switch(id)
-            {
-                case 1:
-                {
-                    user.setCash(player, 250)
-                    break
-                }
-                case 2:
-                {
-                    user.setCash(player, 500)
-                    break
-                }
-                case 3:
-                {
-                    user.setCash(player, 50)
-                    break
-                }
-            }
-
-            user.spawn(player, true, true)
-            setTimeout(() => user.save(player), 2000)
         }
     })
 }

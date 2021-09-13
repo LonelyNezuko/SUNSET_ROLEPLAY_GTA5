@@ -9,6 +9,9 @@ try
     const func = require('../modules/func')
 
     const mysql = require('../mysql')
+    const nodemailer = require('../modules/nodemailer')
+
+    const enums = require('../modules/enums')
 
     mp.events.add({
         'client::join': (player, data) =>
@@ -46,6 +49,19 @@ try
                             status: "success",
                             type: data.type
                         } ])
+
+                        nodemailer.send(data.email, `Регистрация на ${enums.projectNameShort}`, ``, `
+                            <div style="widht: 100%; border-radius: 8px; overflow: hidden;">
+                                <h1 style="widht: calc(100% - 20px); padding: 10px; text-align: center; text-transform: uppercase; background-color: #2ccdbf; color: white; margin: 0;">Регистрация аккаунта на ${enums.projectName}</h1>
+                                <div style="background-color: #f6f6f6; widht: calc(100% - 30px); padding: 15px;">
+                                    При регистрации аккаунта на ${enums.projectName} был указан данный Email адрес.
+                                    <br>
+                                    Для продолжения регистрации введите данный одноразовый код в специальное поле, в интерфейсе регистрации: <span style="background-color: #2ccdbf; color: white; padding: 5px; font-size: 17px; border-radius: 4px;">${randomCode}</span>
+                                    <br>
+                                    <br>
+                                    <div style="background-color: #f99f9f; color: white; widht: 100%; text-align: center; padding: 6px 0; border-radius: 4px;">Если Вы не регистрировали аккаунт на SUNSET ROLE PLAY | GTA 5, то проигнорируйте данное письмо</div>
+                                </div>
+                            </div>`)
                     })
                 }
                 else if(data.type === 'auth')

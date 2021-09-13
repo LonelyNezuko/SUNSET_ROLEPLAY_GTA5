@@ -39,8 +39,6 @@ try
 			})
 
 			container.set('user', player.id, 'lastDate', new Date())
-
-			if(container.get('user', player.id, 'choiceRole') === 0)return user.choiceRole(player)
 			user.spawn(player)
 		})
 	}
@@ -69,7 +67,7 @@ try
 				|| item === 'lastDate'
 				|| item === 'dateBirth')
 			{
-				let date = new Date(container.get('user', player.id, item)).getFullYear() + '.' + new Date(container.get('user', player.id, item)).getMonth() + '.' + new Date(container.get('user', player.id, item)).getDate() + ' ' + new Date(container.get('user', player.id, item)).getHours() + ':' + new Date(container.get('user', player.id, item)).getMinutes() + ':' + new Date(container.get('user', player.id, item)).getSeconds()
+				let date = new Date(container.get('user', player.id, item)).getFullYear() + '.' + (new Date(container.get('user', player.id, item)).getMonth() + 1) + '.' + new Date(container.get('user', player.id, item)).getDate() + ' ' + new Date(container.get('user', player.id, item)).getHours() + ':' + new Date(container.get('user', player.id, item)).getMinutes() + ':' + new Date(container.get('user', player.id, item)).getSeconds()
 				args.push(date)
 			}
 			else
@@ -96,10 +94,11 @@ try
 		})
 	}
 
-	user.spawn = (player, defaultSpawn = false, roleSpawn = false) =>
+	user.spawn = (player, defaultSpawn = false) =>
 	{
 		try
 		{
+			logger.log('user.spawn', container.get('user', player.id, 'position'))
 			if(container.get('user', player.id, 'userCreate') === 0)return user.createCharacter(player)
 
 			user.resetSkin(player)
@@ -111,16 +110,7 @@ try
 				&& !defaultSpawn) user.setPos(player, container.get('user', player.id, 'position').x, container.get('user', player.id, 'position').y, container.get('user', player.id, 'position').z, container.get('user', player.id, 'position').a, container.get('user', player.id, 'position').vw)
 			else
 			{
-				let spawn
-				if(roleSpawn
-					&& container.get('user', player.id, 'choiceRole') !== 0)
-				{
-					const depSpawn = enums.roleSpawn[container.get('user', player.id, 'choiceRole') - 1]
-					logger.log('', depSpawn)
-					spawn = depSpawn[func.random(0, depSpawn.length - 1)]
-				}
-				else spawn = enums.defaultSpawn[func.random(0, enums.defaultSpawn.length - 1)]
-
+				let spawn = enums.defaultSpawn[func.random(0, enums.defaultSpawn.length - 1)]
 				user.setPos(player, spawn[0], spawn[1], spawn[2], spawn[3], spawn[4])
 			}
 		}
