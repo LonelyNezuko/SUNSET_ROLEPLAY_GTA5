@@ -6,6 +6,9 @@ try
 	const func = require('./modules/func')
 
 	const mysql = require('./mysql')
+
+	const chat = require('./chat')
+
 	const user = {}
 
 	user.notify = (player, text, type = 'info') =>
@@ -19,34 +22,100 @@ try
 		setTimeout(() => player.kick(), 2000)
 	}
 
-	user.load = (player, id) =>
+	user.load = (player, character) =>
 	{
-		mysql.query('select * from users where id = ?', [ id ], (err, res) =>
+		logger.log('user.load', character)
+		container.delete('user', player.id)
+		container.set('user', player.id, 'isLogged', false)
+
+		mysql.query('select * from characters where id = ?', [ character ], (err, res) =>
 		{
-			if(err)return logger.error('server::user:load', err)
-			if(!res.length)return user.kick(player, 'Аккаунт не найден! Перезайдите.')
-
-			enums.userVariables.forEach(item =>
+			try
 			{
-				container.set('user', player.id, item, func.isJSON(res[0][item]) ? JSON.parse(res[0][item]) : res[0][item])
-			})
-			container.set('user', player.id, 'id', res[0]['id'])
+				if(err)return logger.error('user.load', err)
+				if(!res.length)return user.kick(player, 'Персонаж не найден!')
 
-			container.set('user', player.id, 'isLogged', true)
-			mp.players.forEach(pl =>
+				enums.characterVariables.forEach(item =>
+				{
+					container.set('user', player.id, item, func.isJSON(res[0][item]) ? JSON.parse(res[0][item]) : res[0][item])
+				})
+
+				container.set('user', player.id, 'id', res[0]['id'])
+				container.set('user', player.id, 'userID', res[0]['userID'])
+
+				container.set('user', player.id, 'lastDate', new Date())
+				container.set('user', player.id, '/veh', null)
+
+				const keyBinds = container.get('user', player.id, 'keyBinds')
+				for(var item in enums.keyDefaultBinds)
+				{
+					if(!keyBinds[item]) keyBinds[item] = enums.keyDefaultBinds[item]
+				}
+				container.set('user', player.id, 'keyBinds', keyBinds)
+
+				const chatsettings = container.get('user', player.id, 'chatsettings')
+				for(var item in enums.defaultChatSettings)
+				{
+					if(chatsettings[item] === undefined) chatsettings[item] = enums.defaultChatSettings[item]
+				}
+				container.set('user', player.id, 'chatsettings', chatsettings)
+
+				mysql.query('select * from users where id = ?', [ container.get('user', player.id, 'userID') ], (err, res) =>
+				{
+					try
+					{
+						if(err)return logger.error('user.load', err)
+						if(!res.length)return user.kick(player, 'Аккаунт не найден!')
+
+						container.set('user', player.id, 'user_id', res[0]['id'])
+						container.set('user', player.id, 'user_username', res[0]['username'])
+						container.set('user', player.id, 'user_password', res[0]['password'])
+						container.set('user', player.id, 'user_email', res[0]['email'])
+						container.set('user', player.id, 'user_regDate', res[0]['regDate'])
+						container.set('user', player.id, 'user_regIP', res[0]['regIP'])
+
+						container.set('user', player.id, 'admin', res[0]['admin'])
+						container.set('user', player.id, 'adminData', JSON.parse(res[0]['adminData']))
+
+						container.set('user', player.id, 'user_lastDate', new Date())
+						container.set('user', player.id, 'user_lastIP', player.ip)
+
+						container.set('user', player.id, 'isLogged', true)
+						mp.players.forEach(pl =>
+						{
+							if(user.isLogged(pl)) user.updateHud(pl)
+						})
+
+						player.call('server::user:setAdminLevel', [ user.getAdmin(player) ])
+						user.spawn(player, false, false)
+
+						chat.local(player, `Добро пожаловать на ${enums.projectNameShort} | ${enums.serverName}`, {
+							timestamp: false
+						})
+						if(user.getAdmin(player)) chat.local(player, `Вы вошли, как администратор ${user.getAdmin(player)} уровня.`, {
+							timestamp: false,
+							style: {
+								color: "#6bc5cf"
+							}
+						})
+					}
+					catch(e)
+					{
+						logger.error('', e)
+					}
+				})
+			}
+			catch(e)
 			{
-				if(user.isLogged(pl)) user.updateHud(pl)
-			})
-
-			container.set('user', player.id, 'lastDate', new Date())
-			user.spawn(player)
+				logger.error('', e)
+			}
 		})
 	}
 	user.save = (player) =>
 	{
 		if(!user.isLogged(player))return
 
-		let query = 'update users set '
+		let query = 'update characters set '
 		const args = []
 
 		container.set('user', player.id, 'position', {
@@ -57,14 +126,12 @@ try
 			vw: player.dimension
 		})
 
-		enums.userVariables.forEach((item, i) =>
+		// Сохранение персонажа
+		enums.characterVariables.forEach((item, i) =>
 		{
 			query += `${item} = ?`
 
-			logger.log(item, typeof container.get('user', player.id, item), container.get('user', player.id, item))
-
-			if(item === 'regDate'
-				|| item === 'lastDate'
+			if(item === 'lastDate'
 				|| item === 'dateBirth')
 			{
 				let date = new Date(container.get('user', player.id, item)).getFullYear() + '.' + (new Date(container.get('user', player.id, item)).getMonth() + 1) + '.' + new Date(container.get('user', player.id, item)).getDate() + ' ' + new Date(container.get('user', player.id, item)).getHours() + ':' + new Date(container.get('user', player.id, item)).getMinutes() + ':' + new Date(container.get('user', player.id, item)).getSeconds()
@@ -77,7 +144,7 @@ try
 				else args.push(container.get('user', player.id, item))
 			}
 
-			if(i === enums.userVariables.length - 1) query += ' '
+			if(i === enums.characterVariables.length - 1) query += ' '
 			else query += ', '
 		})
 
@@ -92,40 +159,42 @@ try
 		{
 			if(err)return logger.error('user.save', err)
 		})
+
+		// Сохранение аккаута
+		mysql.query(`update users set username = ?, password = ?, email = ?, lastDate = ?, lastIP = ?,
+			admin = ?, adminData = ? where id = ?`, [
+			container.get('user', player.id, 'user_username'),
+			container.get('user', player.id, 'user_password'),
+			container.get('user', player.id, 'user_email'),
+			new Date(container.get('user', player.id, 'user_lastDate')).getFullYear() + '.' + (new Date(container.get('user', player.id, 'user_lastDate')).getMonth() + 1) + '.' + new Date(container.get('user', player.id, 'user_lastDate')).getDate() + ' ' + new Date(container.get('user', player.id, 'user_lastDate')).getHours() + ':' + new Date(container.get('user', player.id, 'user_lastDate')).getMinutes() + ':' + new Date(container.get('user', player.id, 'user_lastDate')).getSeconds(),
+			container.get('user', player.id, 'user_lastIP'),
+			container.get('user', player.id, 'admin'),
+			JSON.stringify(container.get('user', player.id, 'adminData')),
+			container.get('user', player.id, 'user_id')
+		], err =>
+		{
+			if(err)return logger.error('user.save', err)
+		})
 	}
 
-	user.spawn = (player, defaultSpawn = false) =>
+	user.spawn = (player, defaultSpawn = false, saveClothes = true) =>
 	{
-		try
+		if(container.get('user', player.id, 'userCreate') === 0)return user.createCharacter(player)
+
+		user.resetSkin(player)
+		user.resetClothes(player)
+
+		user.setClothes(player, container.get('user', player.id, 'clothes'), saveClothes, false)
+
+		if(container.get('user', player.id, 'position').x !== 0
+			&& container.get('user', player.id, 'position').y !== 0
+			&& container.get('user', player.id, 'position').z !== 0
+			&& !defaultSpawn) user.setPos(player, container.get('user', player.id, 'position').x, container.get('user', player.id, 'position').y, container.get('user', player.id, 'position').z, container.get('user', player.id, 'position').a, container.get('user', player.id, 'position').vw)
+		else
 		{
-			logger.log('user.spawn', container.get('user', player.id, 'position'))
-			if(container.get('user', player.id, 'userCreate') === 0)return user.createCharacter(player)
-
-			user.resetSkin(player)
-			user.resetClothes(player)
-
-			if(container.get('user', player.id, 'position').x !== 0
-				&& container.get('user', player.id, 'position').y !== 0
-				&& container.get('user', player.id, 'position').z !== 0
-				&& !defaultSpawn) user.setPos(player, container.get('user', player.id, 'position').x, container.get('user', player.id, 'position').y, container.get('user', player.id, 'position').z, container.get('user', player.id, 'position').a, container.get('user', player.id, 'position').vw)
-			else
-			{
-				let spawn = enums.defaultSpawn[func.random(0, enums.defaultSpawn.length - 1)]
-				user.setPos(player, spawn[0], spawn[1], spawn[2], spawn[3], spawn[4])
-			}
+			let spawn = enums.defaultSpawn[func.random(0, enums.defaultSpawn.length - 1)]
+			user.setPos(player, spawn[0], spawn[1], spawn[2], spawn[3], spawn[4])
 		}
-		catch(e)
-		{
-			logger.error('user.spawn', e)
-		}
-	}
-
-	user.choiceRole = player =>
-	{
-		if(container.get('user', player.id, 'choiceRole') !== 0)return user.spawn(player)
-
-		user.setPos(player, 218.12791442871094, -1139.1434326171875, 29.29643440246582, 98.06212615966797, player.id + 1)
-		setTimeout(() => player.call('server::user:choiceRole'), 1000)
 	}
 
 	user.createCharacter = (player) =>
@@ -152,17 +221,28 @@ try
 		if(gender === -1) gender = container.get('user', player.id, 'gender')
 		player.call('server::user:resetskin', [ settings, gender ])
 	}
-	user.resetClothes = (player) =>
+	user.resetClothes = (player, save = false) =>
 	{
 		if(!user.isLogged(player))return
-		player.call('server::user:resetClothes', [ enums.clothes.none[container.get('user', player.id, 'gender')] ])
+
+		user.setClothes(player, 'none', save)
 	}
-	// user.setClothes = (player, clothes = null) =>
-	// {
-	// 	if(!user.isLogged(player))return
-	//
-	// 	player.call('server::user:resetClothes', [ container.get('user', player.id, 'gender') enums.clothes.none[container.get('user', player.id, 'gender')] ])
-	// }
+	user.setClothes = (player, clothes = 'none', save = true, isName = true) =>
+	{
+		if(!user.isLogged(player))return
+
+		if(isName) clothes = user.getEnumsClothes(player, clothes)
+		player.call('server::user:setClothes', [ clothes ])
+
+		if(save)
+		{
+			const saveClothes = container.get('user', player.id, 'clothes')
+			for(var key in clothes) saveClothes[key] = clothes[key]
+
+			container.set('user', player.id, 'clothes', saveClothes)
+			user.save(player)
+		}
+	}
 
 
 	user.updateHud = player =>
@@ -193,8 +273,6 @@ try
 		user.loadScreen(player, true)
 		setTimeout(() =>
 		{
-			logger.debug('user.setPos', x, y, z, a, vw)
-
 			player.position = new mp.Vector3(x, y, z)
 			player.heading = a
 			player.dimension = vw
@@ -247,6 +325,66 @@ try
 				&& pl.id === id) player = pl
 		})
 		return player
+	}
+
+	user.getEnumsClothes = (player, clothes) =>
+    {
+        if(!user.isLogged(player))return {}
+        return enums.clothes[clothes][container.get('user', player.id, 'gender')]
+    }
+
+	user.getCharName = player =>
+	{
+		if(!user.isLogged(player))return 'No Name'
+		return container.get('user', player.id, 'charname')
+	}
+	user.getUserName = player =>
+	{
+		if(!user.isLogged(player))return 'undefined'
+		return container.get('user', player.id, 'user_username')
+	}
+
+	user.getAdmin = player =>
+	{
+		if(!user.isLogged(player))return 'undefined'
+		return container.get('user', player.id, 'admin')
+	}
+	user.setAdmin = (player, level, setUsername = 'System') =>
+	{
+		if(!user.isLogged(player)
+			|| level < 0 || level > 5)return
+
+		let data = {}
+		if(level)
+		{
+			if(!user.getAdmin(player))
+			{
+				data = {
+					setDate: new Date(),
+					setUsername: setUsername
+				}
+			}
+			else
+			{
+				data = container.get('user', player.id, 'adminData')
+
+				data.resetDate = new Date()
+				data.resetUsername = setUsername
+				data.lastLevel = user.getAdmin(player)
+			}
+		}
+
+		container.set('user', player.id, 'admin', level)
+		container.set('user', player.id, 'adminData', data)
+
+		user.notify(player, `Ваш уровень админки был изменен на ${level}`)
+		user.save(player)
+	}
+
+	user.getKeyBind = (player, bindName) =>
+	{
+		if(!user.isLogged(player))return {}
+		return container.get('user', player.id, 'keyBinds')[bindName]
 	}
 
 	// inventory

@@ -5,25 +5,21 @@ try
     const container = require('./modules/container')
 
     const user = require('./user')
-
     const chat = {}
 
     chat.local = (player, text, data = {}) =>
     {
+        if(data.timestamp === undefined) data.timestamp = container.get('user', player.id, 'chatsettings').timestamp
         player.call('server::chat:send', [ text, data ])
     }
 
-
-    chat.radius = (player, text) =>
+    chat.sendMe = (player, text) =>
     {
-        if(!user.isLogged(player))return
-
-        const formatText = container.get('user', player.id, 'charname') + ` [${player.id}]` + ` говорит: ${text}`
-        mp.players.forEach(pl =>
-        {
-            if(user.isLogged(pl)
-                && func.distance2D(player.position, pl.position) < 30) chat.local(pl, formatText)
-        })
+        mp.events.call('server::chat:sendMe', player, text)
+    }
+    chat.sendDo = (player, text) =>
+    {
+        mp.events.call('server::chat:sendDo', player, text)
     }
 
     module.exports = chat

@@ -381,9 +381,9 @@ const userCreate =
 		if(lastName.length < 4)return goError('#userCreate #userCreate-last-name', 'Длина фамилии не должна быть меньше 4х символов!')
 
 		if(!dateBirth.day
-			|| dateBirth.day < 1 || dateBirth.day > 30)return goError('#userCreate #userCreate-birth-date input:nth-child(2)', 'Не верный номер дня!')
+			|| dateBirth.day < 1 || dateBirth.day > 31)return goError('#userCreate #userCreate-birth-date input:nth-child(2)', 'Не верный номер дня!')
 		if(!dateBirth.month
-			|| dateBirth.month < 1 || dateBirth.month > 11)return goError('#userCreate #userCreate-birth-date input:nth-child(3)', 'Не верный номер месяца!')
+			|| dateBirth.month < 1 || dateBirth.month > 12)return goError('#userCreate #userCreate-birth-date input:nth-child(3)', 'Не верный номер месяца!')
 		if(!dateBirth.year
 			|| dateBirth.year < 1980 || dateBirth.year > 2003)return goError('#userCreate #userCreate-birth-date input:nth-child(4)', 'Год должен быть от 1980, до 2003')
 

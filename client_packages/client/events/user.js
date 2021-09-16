@@ -67,9 +67,9 @@ try
 		{
 			user.resetSkin(settings, gender)
 		},
-		'server::user:resetClothes': clothes =>
+		'server::user:setClothes': clothes =>
 		{
-			user.resetClothes(clothes)
+			user.setClothes(clothes)
 		},
 
 		'server::user:createCharacter': () =>
@@ -131,7 +131,7 @@ try
 	                tops: 15
 	            }
 	        ]
-			user.resetClothes(clothes[data.gender])
+			user.setClothes(clothes[data.gender])
 		},
 		'ui::user:changeCameraCharacter': data =>
 		{
@@ -170,6 +170,77 @@ try
 		'server::user:userCreateError': () =>
 		{
 			ui.call('UI::userCreate:errorCharName')
+		},
+
+		'server::user:setAdminLevel': level =>
+		{
+			user.adminLevel = level
+		},
+
+		'server::user:toggleSpeedometer': (status, data = {}) =>
+		{
+			if(status)
+			{
+				if(data.engine === true) ui.call('UI::hud', {
+						cmd: 'speedometerOn'
+					})
+				else if(data.engine === false) ui.call('UI::hud', {
+						cmd: 'speedometerOff'
+					})
+			}
+
+			ui.call('UI::hud', {
+				cmd: 'speedometerToggle',
+				data: status
+			})
+
+			if(status)
+			{
+				ui.call('UI::hud', {
+					cmd: 'speedometerMileage',
+					data: parseInt(data.mileage)
+				})
+				ui.call('UI::hud', {
+					cmd: 'speedometerFuel',
+					data: parseFloat(data.fuel)
+				})
+				ui.call('UI::hud', {
+					cmd: 'speedometerLocked',
+					data: data.locked
+				})
+
+				user.vehicleMileage = 0.0
+			}
+		},
+		'server::user:engineSpeedometer': status =>
+		{
+			if(!status) ui.call('UI::hud', {
+					cmd: 'speedometerOff'
+				})
+			else ui.call('UI::hud', {
+					cmd: 'speedometerOn'
+				})
+		},
+		'server::user:mileageSpeedometer': mileage =>
+		{
+			ui.call('UI::hud', {
+				cmd: 'speedometerMileage',
+				data: parseInt(mileage)
+			})
+		},
+		'server::user:fuelSpeedometer': fuel =>
+		{
+			ui.call('UI::hud', {
+				cmd: 'speedometerFuel',
+				data: parseFloat(fuel)
+			})
+		},
+		'server::user:lockedSpeedometer': status =>
+		{
+			ui.call('UI::hud', {
+				cmd: 'speedometerLocked',
+				data: status
+			})
 		}
 	})
 }

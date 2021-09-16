@@ -12,9 +12,18 @@ try
 	mysql.connect(() =>
 	{
 		require('./events/events')
-		require('./commands/commands')
+		require('./commands/_connect')
 
 		require('./modules/noClip')
+
+		const vehicles = require('./property/vehicles')
+
+		vehicles.load()
+
+		setInterval(() =>
+		{
+			vehicles.timer()
+		}, 1000)
 	})
 }
 catch(e)

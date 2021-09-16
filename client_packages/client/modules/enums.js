@@ -1,7 +1,8 @@
 const enums = {}
 
 enums.clothesComponentID = {
-    mask: 0,
+    head: 0,
+    mask: 1,
     hair: 2,
     torsos: 3,
     legs: 4,

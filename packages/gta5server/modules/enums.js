@@ -1,31 +1,26 @@
-const logger = require('../modules/logger')
+const logger = require('./logger')
 try
 {
     const enums = {}
 
-    enums.userVariables = [
-        'username',
-        'password',
-        'email',
-
-        'regDate',
+    enums.characterVariables = [
         'lastDate',
-
-        'regIP',
-        'lastIP',
-
         'userCreate',
-        'choiceRole',
 
         'position',
 
         'cash',
 
         'gender',
+
         'skin',
+        'clothes',
 
         'charname',
-        'dateBirth'
+        'dateBirth',
+
+        'keyBinds',
+        'chatsettings'
     ]
 
     enums.defaultSpawn = [
@@ -39,7 +34,8 @@ try
     enums.serverName = 'TEST'
 
     enums.clothesComponentID = {
-        mask: 0,
+        head: 0,
+        mask: 1,
         hair: 2,
         torsos: 3,
         legs: 4,
@@ -51,10 +47,11 @@ try
         decals: 10,
         tops: 11
     }
+
     enums.clothes = {
-        'none':
-        [
-            {
+        'none': [
+            { // male
+                head: 0,
                 mask: 0,
                 torsos: 15,
                 legs: 18,
@@ -66,7 +63,8 @@ try
                 decals: 0,
                 tops: 15
             },
-            {
+            { // female
+                head: 0,
                 mask: 0,
                 torsos: 15,
                 legs: 17,
@@ -78,12 +76,26 @@ try
                 decals: 0,
                 tops: 15
             }
+        ],
+        'start': [
+            { // male
+                torsos: 6,
+                legs: 5,
+                shoes: 4,
+                tops: 7
+            },
+            { // female
+                torsos: 3,
+                legs: 4,
+                shoes: 0,
+                tops: 3
+            }
         ]
     }
 
     // { itemHash, itemType, itemName, maxQuantity, data }
     enums.invItems = [
-        
+
     ]
 
     enums.inventory = {}
@@ -99,6 +111,52 @@ try
 
     enums.projectName = 'SUNSET ROLE PLAY | GTA 5'
     enums.projectNameShort = 'SUNSET ROLE PLAY'
+
+
+    enums.commandsAdmin =
+    {
+        'spawn': 1,
+        'spawnPlayer': 2, // Тот же /spawn, но с дописанием ID игрока
+
+        'setadmin': 4,
+        'veh': 2, // Сюда же и /delveh
+
+        'createvehicle': 5,
+        'deletevehicle': 5
+    }
+
+    enums.keyDefaultBinds =
+    {
+        toggleVehicleEngine: {
+            name: "N",
+            key: 78
+        },
+        toggleVehicleLocked: {
+            name: "L",
+            key: 76
+        },
+        toggleVehicleBelt: {
+            name: "K",
+            key: 75
+        }
+    }
+
+    enums.defaultChatSettings =
+    {
+        timestamp: false
+    }
+
+    enums.vehiclesData =
+    {
+        't20': {
+            maxSpeed: 120,
+
+            maxFuel: 40,
+            expensFuel: 25,
+
+            price: 5000000
+        }
+    }
 
     module.exports = enums
 }

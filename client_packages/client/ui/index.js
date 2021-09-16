@@ -27,13 +27,13 @@ try
 			logger.error('ui.start', e)
 		}
 	}
-	ui.call = (event, args = {}) =>
+	ui.call = (event, args = {}, logging = true) =>
 	{
 		try
 		{
 			if(!ui.cef)return
 
-			logger.debug(`ui.call: ${event}`, args)
+			if(logging) logger.debug(`ui.call: ${event}`, args)
 
 			if(typeof args === 'object') ui.cef.execute(`rage.trigger('${event}', '${JSON.stringify(args)}')`)
 			else ui.cef.execute(`rage.trigger('${event}', '${args}', false)`)

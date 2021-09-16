@@ -3,7 +3,7 @@ try
 {
     const sha256 = require('js-sha256')
 
-    const user = require('./user')
+    const user = require('../user')
     const contaier = require('../modules/container')
 
     const func = require('../modules/func')
@@ -79,7 +79,15 @@ try
                         autoLogin: data.authRememberAutoLogin
                     } ])
 
-                    mp.events.call('server::user:load', player, res[0]['id'])
+                    // временно выбор одного персонажа
+                    const userID = res[0]['id']
+                    mysql.query('select id from characters where userID = ? limit 1', [ userID ], (err, res) =>
+                    {
+                        if(err)return logger.error('client::join', err)
+                        if(!res.length)return user.kick(player.id, 'Персонаж не найден!')
+
+                        user.load(player, res[0]['id'])
+                    })
                 }
             })
         },
@@ -97,8 +105,15 @@ try
             {
                 if(err)return logger.error('client::join:createAccount', err)
 
-                player.call('server::join:hide')
-                mp.events.call('server::user:load', player, res.insertId)
+                // временно
+                const userID = res.insertId
+                mysql.query('insert into characters (userID) values (?)', [ userID ], (err, res) =>
+                {
+                    if(err)return logger.error('client::join:createAccount', err)
+
+                    player.call('server::join:hide')
+                    user.load(player, res.insertId)
+                })
             })
         }
     })

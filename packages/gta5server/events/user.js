@@ -30,16 +30,11 @@ try
 			player.call('server::user:joinShow', [ player.name ])
     	},
 
-        "server::user:load": (player, id) =>
-        {
-            user.load(player, id)
-        },
-
         'client::user:saveCharacter': (player, data) =>
         {
             data = JSON.parse(data)
 
-            mysql.query('select id from users where charname = ?', [ data.firstName + ' ' + data.lastName ], (err, res) =>
+            mysql.query('select id from characters where charname = ?', [ data.firstName + ' ' + data.lastName ], (err, res) =>
             {
                 if(err)return logger.error('client::user:saveCharacter', err)
                 if(res.length)return player.call('server::user:userCreateError')
@@ -56,12 +51,22 @@ try
 
                         container.set('user', player.id, 'charname', data.firstName + ' ' + data.lastName)
                         container.set('user', player.id, 'dateBirth', data.dateBirth)
-                    }
 
-                    user.spawn(player)
+                        user.resetClothes(player, true)
+                        user.setClothes(player, 'start')
+
+                        user.spawn(player, true)
+                    }
+                    else user.spawn(player)
+
                     setTimeout(() => user.save(player), 2000)
                 }, 1000)
             })
+        },
+
+        'client::user:save': player =>
+        {
+            user.save(player)
         }
     })
 }

@@ -39,8 +39,6 @@ try
                         let strArgs = ''
                         args.forEach(item => strArgs += item + ' ')
 
-						logger.debug('command', command, args, strArgs)
-
                         mp.events.callRemote('client::goCommand', command, strArgs.trim())
                     }
 					else mp.events.callRemote('client::chat:send', data.text)

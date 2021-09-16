@@ -196,6 +196,9 @@
 #hud .speedometer .speed svg
 {
     transform: rotate(150deg);
+
+    width: 100%;
+    height: 100%;
 }
 #hud .speedometer .speed svg circle
 {
@@ -219,7 +222,7 @@
 {
     position: absolute;
 
-    top: 60px;
+    top: 40px;
     left: 50%;
 
     transform: translateX(-50%);
@@ -252,7 +255,7 @@
 {
     position: absolute;
 
-    top: 140px;
+    top: 110px;
     left: 50%;
 
     transform: translateX(-50%);
@@ -330,6 +333,39 @@
 #hud .speedometer.speedometer-on .speed .mileage span
 {
     color: #a28349;
+}
+
+#hud .speedometer .speed .fuel
+{
+    position: absolute;
+
+    top: 147px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    display: flex;
+    align-items: flex-end;
+
+    transition: .3s;
+    opacity: 0;
+}
+#hud .speedometer.speedometer-on .speed .fuel
+{
+    opacity: 1;
+}
+#hud .speedometer .speed .fuel h1,
+#hud .speedometer .speed .fuel span
+{
+    font-size: 17px;
+    color: white;
+}
+#hud .speedometer .speed .fuel span
+{
+    position: static;
+    color: white;
+
+    margin-left: 5px;
 }
 
 #hud .notify

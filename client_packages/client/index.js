@@ -19,6 +19,9 @@ try
     mp.game.gameplay.setFadeInAfterDeathArrest(false)
     mp.game.gameplay.setFadeInAfterLoad(false)
 
+    mp.game.vehicle.defaultEngineBehaviour = false
+    mp.players.local.setConfigFlag(429, true)
+
     user.toggleHud(false)
     user.cursor(false)
 

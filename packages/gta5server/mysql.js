@@ -13,7 +13,7 @@ try
             mysql.connection = await mysql2.createConnection({
                 host: 'localhost',
                 user: 'root',
-                database: 'gta5server'
+                database: 'sunset'
             })
             callback()
 

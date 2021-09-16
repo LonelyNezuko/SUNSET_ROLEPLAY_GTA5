@@ -6,6 +6,7 @@ try
     const enums = require('./client/modules/enums')
 
     const user = {}
+    user.adminLevel = 0
 
     user.toggleHud = toggle =>
     {
@@ -135,9 +136,15 @@ try
 
         for(var i = 0; i < 20; i ++) mp.players.local.setFaceFeature(i, settings.face[i])
     }
-    user.resetClothes = clothes =>
+    user.setClothes = clothes =>
     {
         for(var key in clothes) mp.players.local.setComponentVariation(enums.clothesComponentID[key], clothes[key], 0, 0)
+    }
+
+
+    user.save = () =>
+    {
+        mp.events.callRemote('client::user:save')
     }
 
     exports = user

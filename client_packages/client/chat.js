@@ -15,6 +15,15 @@ try
         })
     }
 
+    chat.sendMe = text =>
+    {
+        mp.events.callRemote('client::chat:sendMe', text)
+    }
+    chat.sendDo = text =>
+    {
+        mp.events.callRemote('client::chat:sendDo', text)
+    }
+
     exports = chat
 }
 catch(e)
