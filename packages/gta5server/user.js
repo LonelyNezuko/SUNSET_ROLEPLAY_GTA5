@@ -89,7 +89,6 @@ try
 						})
 
 						player.call('server::user:setAdminLevel', [ user.getAdmin(player) ])
-						user.spawn(player, false, false)
 
 						chat.local(player, `Добро пожаловать на ${enums.projectNameShort} | ${enums.serverName}`, {
 							timestamp: false
@@ -100,6 +99,8 @@ try
 								color: "#6bc5cf"
 							}
 						})
+
+						setTimeout(() => user.spawn(player, false, false), 500)
 					}
 					catch(e)
 					{

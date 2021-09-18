@@ -99,7 +99,10 @@ try
         if(type < 0 || type >= enums.housesType.length
             || classes < 0 || classes >= enums.housesClass.length)return callback = status => status = false
 
-        logger.log('houses.create', enums.housesDefaultSettings[type][classes].interiors[func.random(0, enums.housesDefaultSettings[type][classes].interiors.length - 1)][0], func.random(0, enums.housesDefaultSettings[type][classes].interiors.length - 1))
+        const randomInterior = func.random(0, enums.housesDefaultSettings[type][classes].interiors.length)
+        if(randomInterior >= enums.housesDefaultSettings[type][classes].interiors.length) randomInterior = enums.housesDefaultSettings[type][classes].interiors.length - 1
+
+        logger.log('houses.create', enums.housesDefaultSettings[type][classes].interiors[randomInterior][0], randomInterior)
         mysql.query(`insert into houses (type, class, position, interior, price, owner) values (?, ?, ?, ?, ?, '{ "id": 0, "name": "Неимеется" }')`, [
             type,
             classes,
@@ -110,10 +113,10 @@ try
                 a: position[3]
             }),
             JSON.stringify({
-                x: enums.housesDefaultSettings[type][classes].interiors[func.random(0, enums.housesDefaultSettings[type][classes].interiors.length)][0],
-                y: enums.housesDefaultSettings[type][classes].interiors[func.random(0, enums.housesDefaultSettings[type][classes].interiors.length)][1],
-                z: enums.housesDefaultSettings[type][classes].interiors[func.random(0, enums.housesDefaultSettings[type][classes].interiors.length)][2],
-                a: enums.housesDefaultSettings[type][classes].interiors[func.random(0, enums.housesDefaultSettings[type][classes].interiors.length)][3]
+                x: enums.housesDefaultSettings[type][classes].interiors[randomInterior][0],
+                y: enums.housesDefaultSettings[type][classes].interiors[randomInterior][1],
+                z: enums.housesDefaultSettings[type][classes].interiors[randomInterior][2],
+                a: enums.housesDefaultSettings[type][classes].interiors[randomInterior][3]
             }),
             !data.price ? enums.housesDefaultSettings[type][classes].price : data.price
         ], (err, res) =>

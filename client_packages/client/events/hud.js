@@ -8,12 +8,16 @@ try
 	const chat = require('./client/chat')
 
 	mp.events.add({
-		'ui::hud:openChat': () =>
+		'ui::hud:openChat': (returns = false) =>
 		{
-			user.cursor(true, false)
-			ui.call('UI::hud', {
-				cmd: 'chatOpen'
-			})
+			if(!returns) mp.events.callRemote('client::hud:openChat')
+			else
+			{
+				user.cursor(true, false)
+				ui.call('UI::hud', {
+					cmd: 'chatOpen'
+				})
+			}
 		},
         'ui::hud:closeChat': () =>
         {

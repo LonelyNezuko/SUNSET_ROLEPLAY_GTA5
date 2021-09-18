@@ -9,6 +9,7 @@ try
     require('./vehicles')
     require('./keys')
     // require('./menuList')
+    require('./ui')
 
     const user = require('../user')
     const container = require('../modules/container')
