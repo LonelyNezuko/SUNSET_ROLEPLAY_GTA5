@@ -17,8 +17,10 @@ try
 		require('./modules/noClip')
 
 		const vehicles = require('./property/vehicles')
+		const houses = require('./property/houses')
 
 		vehicles.load()
+		houses.load()
 
 		setInterval(() =>
 		{

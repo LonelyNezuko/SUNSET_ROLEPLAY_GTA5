@@ -40,12 +40,6 @@ try
 					container.set('user', player.id, item, func.isJSON(res[0][item]) ? JSON.parse(res[0][item]) : res[0][item])
 				})
 
-				// if(typeof container.get('user', player.id, 'position') !== 'object') container.set('user', player.id, 'position', { x: 0, y: 0, z: 0, a: 0 })
-				// if(typeof container.get('user', player.id, 'skin') !== 'object') container.set('user', player.id, 'skin', { "pedigree": { "one": 0, "two": 0, "looks": 0.5, "skin": 0.5 }, "hair": { "color": 0, "head": 0, "eyebrow": 0, "beard": 0, "breast": 0 }, "face": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "appearance": [0, 0, 0, 0, 0, 0, 0, 0, 0] })
-				// if(typeof container.get('user', player.id, 'clothes') !== 'object') container.set('user', player.id, 'clothes', {})
-				// if(typeof container.get('user', player.id, 'keyBinds') !== 'object') container.set('user', player.id, 'keyBinds', {})
-				// if(typeof container.get('user', player.id, 'chatsettings') !== 'object') container.set('user', player.id, 'chatsettings', {})
-
 				container.set('user', player.id, 'id', res[0]['id'])
 				container.set('user', player.id, 'userID', res[0]['userID'])
 
@@ -65,6 +59,8 @@ try
 					if(chatsettings[item] === undefined) chatsettings[item] = enums.defaultChatSettings[item]
 				}
 				container.set('user', player.id, 'chatsettings', chatsettings)
+
+				container.set('user', player.id, 'nears', {})
 
 				mysql.query('select * from users where id = ?', [ container.get('user', player.id, 'userID') ], (err, res) =>
 				{

@@ -4,7 +4,8 @@ try
     const container = {}
     container.data = {
         user: {},
-        vehicles: {}
+        vehicles: {},
+        houses: {}
     }
 
     container.has = (type, id, key) =>
@@ -26,6 +27,8 @@ try
         {
             if(!container.data[type][id]) container.data[type][id] = {}
             container.data[type][id][key] = value
+
+            return container.data[type][id][key]
         }
         catch(e)
         {
@@ -46,6 +49,20 @@ try
     {
         if(!container.data[type][id])return null
         return container.data[type][id]
+    }
+    container.deleteAll = type =>
+    {
+        container.data[type] = {}
+    }
+    container.free = type =>
+    {
+        let freeID
+        for(var key in container.data[type])
+        {
+            if(!container.data[type][parseInt(key) + 1]
+                && freeID === undefined) freeID = parseInt(key) + 1
+        }
+        return freeID
     }
 
     module.exports = container

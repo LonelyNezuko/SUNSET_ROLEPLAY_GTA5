@@ -9,6 +9,7 @@ try
     const container = require('../modules/container')
 
     const vehicles = require('../property/vehicles')
+    const houses = require('../property/houses')
 
     commandsAdd({
         'spawn': {
@@ -126,6 +127,43 @@ try
 
                 vehicles.destroy(veh.id)
                 user.notify(player, 'Транспорт был удален', 'warning')
+            }
+        },
+
+        'createhouse': {
+            settings: {
+                admin: enums.commandsAdmin.createhouse
+            },
+            func: (player, str, [ type, classes, price ]) =>
+            {
+                if(type === undefined
+                    || classes === undefined)return user.notify(player, '/createhouse [type (0 - Дом, 1 - Квартира)] [class (0 - Бюджет, 1 - Средний, 2 - Люкс)] (price)', 'error')
+
+                type = parseInt(type)
+                classes = parseInt(classes)
+                price = price === undefined ? 0 : parseInt(price)
+
+                if(type < 0 || type >= enums.housesType.length)return user.notify(player, `Тип дома/квартиры  0 - ${enums.housesType.length - 1}`, 'error')
+                if(classes < 0 || classes >= enums.housesClass.length)return user.notify(player, `Тип дома/квартиры  0 - ${enums.housesClass.length - 1}`, 'error')
+
+                houses.create(type, classes, [ player.position.x, player.position.y, player.position.z, player.position.a ], price > 0 ? { price: price } : {}, status =>
+                {
+                    if(status === false)return user.notify(player, 'Не удалось создать дом', 'error')
+                    user.notify(player, `Вы успешно создали дом ${status}`, 'warning')
+                })
+            }
+        },
+        'deletehouse': {
+            settings: {
+                admin: enums.commandsAdmin.deletehouse
+            },
+            func: player =>
+            {
+                const id = houses.nearPlayer(player)
+                if(id === -1)return user.notify(player, 'Вы должны стоять возле дома/квартиры', 'error')
+
+                houses.delete(id)
+                user.notify(player, `Вы успешно удалили дом ${id}`, 'warning')
             }
         }
     })

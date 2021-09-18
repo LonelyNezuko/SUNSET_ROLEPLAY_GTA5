@@ -95,7 +95,7 @@ try
         'client::join:createAccount': (player, data) =>
         {
             data = JSON.parse(data)
-            mysql.query('insert into users (username, password, email, regIP, lastIP) values (?, ?, ?, ?, ?)', [
+            mysql.query(`insert into users (username, password, email, regIP, lastIP, adminData) values (?, ?, ?, ?, ?, '{}')`, [
                 data.username,
                 sha256(data.password),
                 data.email,
@@ -107,7 +107,7 @@ try
 
                 // временно
                 const userID = res.insertId
-                mysql.query('insert into characters (userID) values (?)', [ userID ], (err, res) =>
+                mysql.query(`insert into characters (userID, position, skin, clothes, keyBinds, chatsettings) values (?, '{ "x": 0, "y": 0, "z": 0, "a": 0 }', '{ "pedigree": { "one": 0, "two": 0, "looks": 0.5, "skin": 0.5 }, "hair": { "color": 0, "head": 0, "eyebrow": 0, "beard": 0, "breast": 0 }, "face": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "appearance": [0, 0, 0, 0, 0, 0, 0, 0, 0] }', '{}', '{}', '{}')`, [ userID ], (err, res) =>
                 {
                     if(err)return logger.error('client::join:createAccount', err)
 
