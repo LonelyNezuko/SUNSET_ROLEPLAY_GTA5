@@ -57,12 +57,18 @@ try
     container.free = type =>
     {
         let freeID
-        for(var key in container.data[type])
+        for(var key in container.all(type))
         {
             if(!container.data[type][parseInt(key) + 1]
                 && freeID === undefined) freeID = parseInt(key) + 1
         }
+
+        if(freeID === undefined) freeID = 0
         return freeID
+    }
+    container.all = type =>
+    {
+        return container.data[type]
     }
 
     module.exports = container

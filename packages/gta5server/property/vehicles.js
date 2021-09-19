@@ -26,7 +26,8 @@ try
                     heading: item.heading,
                     mileage: item.mileage,
                     fuel: item.fuel,
-                    owner: JSON.parse(item.owner)
+                    owner: JSON.parse(item.owner),
+                    dimension: item.dimension
                 })
 
                 if(veh)
@@ -50,6 +51,7 @@ try
         settingsVeh.locked = data.locked === undefined ? false : data.locked
         settingsVeh.engine = data.engine === undefined ? false : data.engine
         if(data.heading) settingsVeh.heading = data.heading
+        if(data.dimension) settingsVeh.dimension = data.dimension
 
         const veh = mp.vehicles.new(mp.joaat(model), new mp.Vector3(position[0], position[1], position[2]), settingsVeh)
         container.delete('vehicles', veh.id)
@@ -74,16 +76,18 @@ try
             z: position[2]
         })
         container.set('vehicles', veh.id, 'heading', data.heading || 0)
+        container.set('vehicles', veh.id, 'dimension', data.dimension || 0)
 
         container.set('vehicles', veh.id, 'owner', data.owner || {})
         container.set('vehicles', veh.id, 'save', data.save === undefined ? false : true)
 
         if(data.save === true)
         {
-            mysql.query('insert into vehicles (model, position, heading, owner, locked, number, color, fuel) values (?, ?, ?, ?, ?, ?, ?, ?)', [
+            mysql.query('insert into vehicles (model, position, heading, dimension, owner, locked, number, color, fuel) values (?, ?, ?, ?, ?, ?, ?, ?, ?)', [
                 model,
                 JSON.stringify(container.get('vehicles', veh.id, 'position')),
                 container.get('vehicles', veh.id, 'heading'),
+                container.get('vehicles', veh.id, 'dimension'),
                 JSON.stringify(container.get('vehicles', veh.id, 'owner')),
                 container.get('vehicles', veh.id, 'locked'),
                 container.get('vehicles', veh.id, 'number'),
@@ -118,9 +122,10 @@ try
 
         if(!container.get('vehicles', veh.id, 'save'))return
 
-        mysql.query('update vehicles set position = ?, heading = ?, owner = ?, locked = ?, number = ?, color = ?, mileage = ?, fuel = ? where id = ?', [
+        mysql.query('update vehicles set position = ?, heading = ?, dimension = ?, owner = ?, locked = ?, number = ?, color = ?, mileage = ?, fuel = ? where id = ?', [
             JSON.stringify(container.get('vehicles', veh.id, 'position')),
             container.get('vehicles', veh.id, 'heading'),
+            container.get('vehicles', veh.id, 'dimension'),
             JSON.stringify(container.get('vehicles', veh.id, 'owner')),
             container.get('vehicles', veh.id, 'locked'),
             container.get('vehicles', veh.id, 'number'),

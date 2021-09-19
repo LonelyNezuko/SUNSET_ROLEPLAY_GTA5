@@ -276,7 +276,14 @@ try
 		user.loadScreen(player, true)
 		setTimeout(() =>
 		{
-			player.position = new mp.Vector3(x, y, z)
+			if(!player.vehicle) player.position = new mp.Vector3(x, y, z)
+			else
+			{
+				player.vehicle.position = new mp.Vector3(x, y, z)
+				player.vehicle.heading = a
+				player.vehicle.dimension = vw
+			}
+
 			player.heading = a
 			player.dimension = vw
 
@@ -388,6 +395,36 @@ try
 	{
 		if(!user.isLogged(player))return {}
 		return container.get('user', player.id, 'keyBinds')[bindName]
+	}
+
+	user.setNear = (player, nearName, nearData) =>
+	{
+		if(!user.isLogged(player))return
+
+		const nears = user.getNears(player)
+
+		nears[nearName] = nearData
+		container.set('user', player.id, 'nears', nears)
+	}
+	user.removeNear = (player, nearName) =>
+	{
+		if(!user.isLogged(player))return
+
+		const nears = user.getNears(player)
+
+		delete nears[nearName]
+		container.set('user', player.id, 'nears', nears)
+	}
+	user.getNears = player =>
+	{
+		if(!user.isLogged(player))return {}
+		return container.get('user', player.id, 'nears')
+	}
+
+	user.getID = player =>
+	{
+		if(!user.isLogged(player))return {}
+		return container.get('user', player.id, 'id')
 	}
 
 	// inventory

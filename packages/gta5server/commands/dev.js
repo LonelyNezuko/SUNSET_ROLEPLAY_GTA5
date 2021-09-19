@@ -8,8 +8,11 @@ try
     const user = require('../user')
 
     const enums = require('../modules/enums')
+    const func = require('../modules/func')
+    const container = require('../modules/container')
 
     const vehicles = require('../property/vehicles')
+    const houses = require('../property/houses')
 
     commandsAdd({
         'setfuel': {
@@ -142,6 +145,22 @@ try
 
     			user.setClothes(target, name)
     			user.notify(player, `Вы успешно установили ${user.getCharName(target)} одежду ${name}`)
+            }
+        },
+
+        'buyhouse': {
+            func: player =>
+            {
+                const id = houses.nearPlayer(player)
+                if(id === -1)return user.notify(player, 'Вы должны находиться возле дома/квартиры', 'error')
+
+                if(houses.getOwner(id).id !== 0)return user.notify(player, 'Данное имущество уже куплено', 'error')
+                if(user.getCash(player) < container.get('houses', id, 'price'))return user.notify(player, `У Вас не хватает ${func.formatCash(container.get('houses', id, 'price') - user.getCash(player))}`, 'error')
+
+                houses.buy(id, player)
+
+                user.notify(player, `Поздравляем с приобретением ${enums.housesType[houses.getType(id)]} ${enums.housesClass[houses.getClass(id)]} класса за ${func.formatCash(container.get('houses', id, 'price'))}`)
+                user.giveCash(player, -container.get('houses', id, 'price'))
             }
         }
     })

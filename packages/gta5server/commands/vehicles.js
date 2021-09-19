@@ -25,6 +25,7 @@ try
                     z: veh.position.z
                 })
                 container.set('vehicles', veh.id, 'heading', veh.heading)
+                container.set('vehicles', veh.id, 'dimension', veh.dimension)
 
                 vehicles.save(veh.id)
                 user.notify(player, 'Вы успешно припарковали транспорт здесь', 'warning')

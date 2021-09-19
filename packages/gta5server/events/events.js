@@ -15,6 +15,7 @@ try
     const container = require('../modules/container')
 
     const vehicles = require('../property/vehicles')
+    const houses = require('../property/houses')
 
     mp.events.add(
     {
@@ -33,7 +34,16 @@ try
         },
 
         'playerEnterVehicle': vehicles.onEnter,
-        'playerExitVehicle': vehicles.onExit
+        'playerExitVehicle': vehicles.onExit,
+
+        'playerEnterColshape': (player, shape) =>
+        {
+            houses.enterColshape(player, shape)
+        },
+        'playerExitColshape': (player, shape) =>
+        {
+            houses.exitColshape(player, shape)
+        }
     })
 }
 catch(e)

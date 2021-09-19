@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Сен 18 2021 г., 14:45
+-- Время создания: Сен 19 2021 г., 15:40
 -- Версия сервера: 10.3.13-MariaDB-log
 -- Версия PHP: 7.3.9
 
@@ -37,7 +37,7 @@ CREATE TABLE `characters` (
   `cash` float NOT NULL DEFAULT 1200,
   `gender` int(11) NOT NULL DEFAULT 0,
   `skin` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `clothes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '{}',
+  `clothes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `charname` varchar(144) NOT NULL DEFAULT 'No Name',
   `dateBirth` datetime NOT NULL DEFAULT current_timestamp(),
   `keyBinds` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
@@ -60,9 +60,16 @@ CREATE TABLE `houses` (
   `class` int(11) NOT NULL,
   `owner` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `position` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `dimension` int(11) NOT NULL,
   `interior` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `price` int(11) NOT NULL
+  `price` int(11) NOT NULL,
+  `garage` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `locked` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `houses`
+--
 
 -- --------------------------------------------------------
 
@@ -98,6 +105,7 @@ CREATE TABLE `vehicles` (
   `model` varchar(255) NOT NULL,
   `position` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `heading` float NOT NULL,
+  `dimension` int(11) NOT NULL,
   `owner` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `locked` int(11) NOT NULL,
   `number` varchar(144) NOT NULL,
@@ -146,25 +154,25 @@ ALTER TABLE `vehicles`
 -- AUTO_INCREMENT для таблицы `characters`
 --
 ALTER TABLE `characters`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT для таблицы `houses`
 --
 ALTER TABLE `houses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT для таблицы `vehicles`
 --
 ALTER TABLE `vehicles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

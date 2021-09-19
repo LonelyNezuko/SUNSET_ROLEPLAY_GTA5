@@ -1,6 +1,7 @@
 require('./admin')
 require('./dev')
 require('./vehicles')
+require('./houses')
 
 const [ commandsAdd, commands ] = require('./_commandsAdd')
 
@@ -26,5 +27,11 @@ mp.events.add('client::goCommand', (player, command, args) =>
             && !vehicles.isRights(player.vehicle.id, player))return user.notify(player, 'У Вас нет доступа к этому транспорту', 'error')
     }
 
-    command.func(player, args, args.split(' '))
+    const argsParse = args.split(' ')
+    argsParse.forEach((item, i) =>
+    {
+        if(item === '') argsParse[i] = undefined
+    })
+
+    command.func(player, args, argsParse)
 })

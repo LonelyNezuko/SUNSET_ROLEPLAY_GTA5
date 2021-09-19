@@ -65,7 +65,8 @@ try
 
                 const veh = vehicles.create(model, [ player.position.x, player.position.y, player.position.z ], {
                     number: 'ADMIN',
-                    heading: player.heading
+                    heading: player.heading,
+                    dimension: player.dimension
                 })
                 if(!veh)return user.notify(player, 'Не удалось создать транспорт', 'error')
 
@@ -86,7 +87,7 @@ try
                 vehicles.destroy(container.get('user', player.id, '/veh'))
                 container.set('user', player.id, '/veh', null)
 
-                user.notify(player, 'Транспорт удале', 'warning')
+                user.notify(player, 'Транспорт удален', 'warning')
             }
         },
 
@@ -143,10 +144,15 @@ try
                 classes = parseInt(classes)
                 price = price === undefined ? 0 : parseInt(price)
 
-                if(type < 0 || type >= enums.housesType.length)return user.notify(player, `Тип дома/квартиры  0 - ${enums.housesType.length - 1}`, 'error')
-                if(classes < 0 || classes >= enums.housesClass.length)return user.notify(player, `Тип дома/квартиры  0 - ${enums.housesClass.length - 1}`, 'error')
+                if(type < 0 || type > enums.housesType.length - 1)return user.notify(player, `Тип дома/квартиры  0 - ${enums.housesType.length - 1}`, 'error')
+                if(classes < 0 || classes > enums.housesClass.length - 1)return user.notify(player, `Тип дома/квартиры  0 - ${enums.housesClass.length - 1}`, 'error')
 
-                houses.create(type, classes, [ player.position.x, player.position.y, player.position.z, player.position.a ], price > 0 ? { price: price } : {}, status =>
+                const data = {}
+                if(price > 0) data.price = price
+
+                data.dimension = player.dimension
+
+                houses.create(type, classes, [ player.position.x, player.position.y, player.position.z - 1, player.position.a ], data, status =>
                 {
                     if(status === false)return user.notify(player, 'Не удалось создать дом', 'error')
                     user.notify(player, `Вы успешно создали дом ${status}`, 'warning')
@@ -164,6 +170,67 @@ try
 
                 houses.delete(id)
                 user.notify(player, `Вы успешно удалили дом ${id}`, 'warning')
+            }
+        },
+        'edithouse': {
+            settings: {
+                admin: enums.commandsAdmin.editHouse
+            },
+            func: (player, str, [ houseID ]) =>
+            {
+                if(houseID === undefined)return user.notify(player, '/edithouse [house id]', 'error')
+                houseID = parseInt(houseID)
+
+                const id = houses.getServerID(houseID)
+                if(id === -1)return user.notify(player, `Дом с #${houseID} не найден`, 'error')
+
+                if(player.dimension !== container.get('houses', id, 'dimension'))return user.notify(player, 'Вы не можете установить гараж в данном виртуальном мире', 'error')
+                if(houses.getType(id) !== 0)return user.notify(player, 'Позицию гаража можно изменять только у домов', 'error')
+
+                container.get('houses', id, 'garage').position.x = player.position.x
+                container.get('houses', id, 'garage').position.y = player.position.y
+                container.get('houses', id, 'garage').position.z = player.position.z
+                container.get('houses', id, 'garage').position.a = player.heading
+
+                houses.refresh(id)
+                houses.save(id)
+
+                user.notify(player, `Вы успешно изменили позицию гаража у дом #${houseID}`, 'warning')
+            }
+        },
+
+        'tphouse': {
+            settings: {
+                admin: enums.commandsAdmin.tphouse
+            },
+            func: (player, str, [ houseID ]) =>
+            {
+                if(houseID === undefined)return user.notify(player, '/tphouse [house id]', 'error')
+                houseID = parseInt(houseID)
+
+                const id = houses.getServerID(houseID)
+                if(id === -1)return user.notify(player, `Дом с #${houseID} не найден`, 'error')
+
+                houses.tp(player, id)
+            }
+        },
+        'tphouseint': {
+            settings: {
+                admin: enums.commandsAdmin.tphouseint
+            },
+            func: (player, str, [ houseID ]) =>
+            {
+                if(houseID === undefined)return user.notify(player, '/tphouseint [house id]', 'error')
+                houseID = parseInt(houseID)
+
+                const id = houses.getServerID(houseID)
+                if(id === -1)return user.notify(player, `Дом/Квартира с #${houseID} не найден`, 'error')
+
+                if(container.get('houses', id, 'interior').x === 0
+                    && container.get('houses', id, 'interior').y === 0
+                    && container.get('houses', id, 'interior').z === 0)return user.notify(player, 'У дома/квартиры нет интерьера', 'error')
+
+                houses.tpInterior(player, id, true)
             }
         }
     })
