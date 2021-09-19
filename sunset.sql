@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Сен 19 2021 г., 15:40
+-- Время создания: Сен 19 2021 г., 16:48
 -- Версия сервера: 10.3.13-MariaDB-log
 -- Версия PHP: 7.3.9
 
@@ -87,7 +87,7 @@ CREATE TABLE `users` (
   `regIP` varchar(16) NOT NULL,
   `lastIP` varchar(16) NOT NULL,
   `admin` int(11) NOT NULL DEFAULT 0,
-  `adminData` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '{}'
+  `adminData` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
