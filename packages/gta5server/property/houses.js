@@ -250,7 +250,7 @@ try
                     z: 0,
                     a: 0
                 }
-            }
+            })
         if(type === 0) garage = JSON.stringify({
                 house: {
                     x: enums.housesDefaultSettings[type][classes].garages[randomInteriorGarage][0],
@@ -276,7 +276,7 @@ try
                     z: 0,
                     a: 0
                 }
-            }
+            })
 
         mysql.query(`insert into houses (type, class, position, dimension, interior, price, owner, garage) values (?, ?, ?, ?, ?, ?, '{ "id": 0, "name": "Неимеется" }', ?)`, [
             type,
@@ -295,7 +295,7 @@ try
                 a: enums.housesDefaultSettings[type][classes].interiors[randomInterior][3]
             }),
             !data.price ? enums.housesDefaultSettings[type][classes].price : data.price,
-            garage)
+            garage
         ], (err, res) =>
         {
             if(err)
