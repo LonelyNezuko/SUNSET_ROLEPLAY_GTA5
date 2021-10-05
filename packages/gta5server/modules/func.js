@@ -38,6 +38,16 @@ try
         return str + " " + formating.format(cash).replace('$', '')
     }
 
+    func.getCameraOffset = (pos, angle, dist) =>
+    {
+        angle = angle * 0.0174533;
+
+        pos.y = pos.y + dist * Math.sin(angle);
+        pos.x = pos.x + dist * Math.cos(angle);
+
+        return pos;
+    }
+
     module.exports = func
 }
 catch(e)

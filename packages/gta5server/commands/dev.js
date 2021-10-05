@@ -6,15 +6,61 @@ try
     const [ commandsAdd ] = require('./_commandsAdd')
 
     const user = require('../user')
+    const chat = require('../chat')
 
     const enums = require('../modules/enums')
     const func = require('../modules/func')
     const container = require('../modules/container')
+    const menuList = require('../modules/menuList')
 
     const vehicles = require('../property/vehicles')
     const houses = require('../property/houses')
 
     commandsAdd({
+        'getquests': {
+            func: player =>
+            {
+                chat.local(player, 'Мои квесты:', {
+                    timestamp: false
+                })
+
+                container.get('user', player.id, 'quests').forEach(quest =>
+                {
+                    chat.local(player, ' ', {
+                        timestamp: false
+                    })
+
+                    chat.local(player, quest.name, {
+                        timestamp: false
+                    })
+                    chat.local(player, `Награда: ${quest.prize.desc}`, {
+                        timestamp: false
+                    })
+                    chat.local(player, 'Задания:', {
+                        timestamp: false
+                    })
+                    chat.local(player, ' ', {
+                        timestamp: false
+                    })
+                    quest.tasks.forEach(task =>
+                    {
+                        chat.local(player, `${task.name} (Прогрес: ${task.progress} / ${task.maxProgress})`, {
+                            timestamp: false,
+                            style: {
+                                color: '#5db3f0'
+                            }
+                        })
+                    })
+                    chat.local(player, ' ', {
+                        timestamp: false
+                    })
+                    chat.local(player, `Статус: ${enums.questStatusName[quest.status]}`, {
+                        timestamp: false
+                    })
+                })
+            }
+        },
+
         'setfuel': {
             settings: {
                 admin: 5
@@ -125,6 +171,8 @@ try
 
     			user.giveCash(target, cash)
     			user.notify(player, `Вы изменили баланс ${user.getCharName(target)}: ${func.formatCash(user.getCash(target))}`)
+
+                user.updateQuest(player, 'Тестовый квест', 0, cash)
             }
         },
         'setclothes': {

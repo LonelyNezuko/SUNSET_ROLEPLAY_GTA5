@@ -1,0 +1,29 @@
+const logger = require('./logger')
+try
+{
+    const npcDialog = {}
+
+    npcDialog.setHeader = (player, header) =>
+    {
+        player.call('server::npcDialog:header', [ header ])
+    }
+    npcDialog.setText = (player, text, btns = []) =>
+    {
+        player.call('server::npcDialog:text', [ text, btns ])
+    }
+    npcDialog.toggle = (player, toggle, timer = 0) =>
+    {
+        setTimeout(() => player.call('server::npcDialog:toggle', [ toggle ]), timer)
+    }
+
+    npcDialog.trigger = (player, button) =>
+    {
+        player.npcDialogTrigger(button)
+    }
+
+    module.exports = npcDialog
+}
+catch(e)
+{
+    logger.error('modules/npcDialog.js', e)
+}

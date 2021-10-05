@@ -11,11 +11,9 @@ try
 	{
 		try
 		{
-			ui.cef = mp.browsers.new('package://ui/ui.html')
-			mp.events.add('browserDomReady', browser =>
+			ui.cef = mp.browsers.new('package://ui/index.html')
+			mp.events.add('ui::app:mounted', () =>
 			{
-				if(browser !== ui.cef)return user.kick('Не удалось загрузить UI!')
-
 				ui.cefActive = true
 				logger.debug('UI started')
 
@@ -33,10 +31,11 @@ try
 		{
 			if(!ui.cef)return
 
+			// event = event.replace('UI::', '')
 			if(logging) logger.debug(`ui.call: ${event}`, args)
 
-			if(typeof args === 'object') ui.cef.execute(`rage.trigger('${event}', '${JSON.stringify(args)}')`)
-			else ui.cef.execute(`rage.trigger('${event}', '${args}', false)`)
+			if(typeof args === 'object') ui.cef.execute(`trigger('${event}', '${JSON.stringify(args)}')`)
+			else ui.cef.execute(`trigger('${event}', '${args}')`)
 		}
 		catch(e)
 		{

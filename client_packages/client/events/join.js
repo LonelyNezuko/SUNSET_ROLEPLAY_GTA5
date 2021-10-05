@@ -7,36 +7,76 @@ try
 
     mp.events.add({
 
-        'ui::join': data =>
+        'ui::auth:tryLogin': data =>
         {
-            mp.events.callRemote('client::join', data)
+            data = JSON.parse(data)
+
+            data.username = data.login
+            data.type = 'auth'
+
+            mp.events.callRemote('client::join', JSON.stringify(data))
         },
-        'server::join:result': data =>
+        'ui::auth:tryReg': data =>
         {
-            ui.call(`client::join:result:${data.type}`, data.message)
+            data = JSON.parse(data)
+
+            data.username = data.login
+            data.type = 'reg'
+
+            mp.events.callRemote('client::join', JSON.stringify(data))
         },
 
-        'ui::join:createAccount': data =>
+        'server::join:result': data =>
         {
-            mp.events.callRemote('client::join:createAccount', data)
+            if(data.type === 'reg'
+                && data.status === 'success')
+            {
+                user.regEmailCode = parseInt(data.message)
+                ui.call(`UI::auth`, {
+                    cmd: "updatePage",
+                    data: 5
+                })
+            }
+            else
+            {
+                ui.call(`UI::auth`, {
+                    cmd: "showError",
+                    data: data.message
+                })
+            }
         },
-        'server::join:hide': remember =>
+
+        'ui::auth:regMail': data =>
         {
-            ui.call('UI::join', {
-                cmd: 'toggle',
-                data: false
+            data = JSON.parse(data)
+            if(parseInt(data.code) !== user.regEmailCode)
+            {
+                return ui.call(`UI::auth`, {
+                    cmd: "showError",
+                    data: "Не верный код подтверждения"
+                })
+            }
+
+            mp.events.callRemote('client::join:createAccount', JSON.stringify(data))
+        },
+        'server::join:hide': data =>
+        {
+            ui.call('UI::auth', {
+                cmd: 'hide'
             })
             user.cursor(false, true)
 
             mp.players.local.freezePosition(false)
             user.destroyCamera()
 
-            if(remember) mp.storage.data.authRemember = remember
-            else
+            logger.log('server::join:hide', data)
+            if(data.type === 'auth')
             {
-                if(mp.storage.data.authRemember !== undefined) delete mp.storage.data.authRemember
+                if(data.remember) mp.storage.data.authRemember = data.remember
+                else delete mp.storage.data.authRemember
+
+                mp.storage.flush()
             }
-            mp.storage.flush()
         }
     })
 }

@@ -28,8 +28,8 @@ try
     user.setVW(mp.players.local.id + 1)
     mp.players.local.freezePosition(true)
 
-    mp.players.local.position = new mp.Vector3(131.40255737304688, -1179.633544921875, 29.58236312866211)
-    user.setCamera(new mp.Vector3(139.1585693359375, -1179.1124267578125, 31.22740936279297), [ 124.16255187988281, -1200.6533203125, 28.439077377319336 ])
+    mp.players.local.position = new mp.Vector3(-406.1335144042969, 6321.80126953125, 29.122058868408203)
+    user.setCamera(new mp.Vector3(-433.9073181152344, 6206.02587890625, 125.67748260498047), [ -177.31312561035156, 6252.0205078125, 35.86330795288086 ])
 
     enums.interiors.forEach(item =>
     {
@@ -37,6 +37,7 @@ try
     })
 
     setTimeout(() => ui.start(), 100)
+    setInterval(() => user.timer(), 1000)
 }
 catch(e)
 {

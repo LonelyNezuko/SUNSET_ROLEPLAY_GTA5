@@ -64,7 +64,7 @@ mp.events.add('render', () => {
                 mp.players.local.setCoordsNoOffset(position.x, position.y, position.z, false, false, false);
             }
 
-            user.notify(fly.flying ? 'NoClip: Enabled' : 'NoClip: Disabled');
+            user.notify(fly.flying ? 'NoClip: Enabled' : 'NoClip: Disabled', 'spec');
         } else if (fly.flying) {
             let updated = false;
             const position = mp.players.local.position;

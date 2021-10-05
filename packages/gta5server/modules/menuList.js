@@ -15,14 +15,15 @@ try
     {
         player.call('server::menuList:header', [ title, desc ])
     }
-    menuList.append = (player, type, id, title, data = {}) =>
+    menuList.append = (player, type, id = '', title = '', value = '', data = {}) =>
     {
-        player.call('server::menuList:append', [ type, id, title, data ])
+        player.call('server::menuList:append', [ type, id, title, value, JSON.stringify(data) ])
     }
 
-    menuList.enter = (player, callback) =>
+    menuList.trigger = (player, data) =>
     {
-        
+        data = JSON.parse(data)
+        player.menuListTrigger(data.id, data.value, data.elems)
     }
 
     module.exports = menuList

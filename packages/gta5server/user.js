@@ -1,6 +1,8 @@
 const logger = require('./modules/logger')
 try
 {
+	const sha256 = require('js-sha256')
+
 	const enums = require('./modules/enums')
 	const container = require('./modules/container')
 	const func = require('./modules/func')
@@ -9,17 +11,59 @@ try
 
 	const chat = require('./chat')
 
+	const vehicles = require('./property/vehicles')
+
 	const user = {}
 
-	user.notify = (player, text, type = 'info') =>
+	user.notify = (player, text, type = 'success') =>
 	{
 		player.call('server::user:notify', [ text, type ])
+	}
+
+	user.setCamera = (player, position, atCoord, data = {}) =>
+	{
+		player.call('server::user:setCamera', [ position, atCoord, data ])
+	}
+	user.destroyCamera = player =>
+	{
+		player.call('server::user:destroyCamera')
 	}
 
 	user.kick = (player, reason) =>
 	{
 		user.notify(player, reason, 'error')
 		setTimeout(() => player.kick(), 2000)
+	}
+
+	user.create = (player, username, password, email, promo) =>
+	{
+		if(user.isLogged(player))return kick(player)
+
+		const savePromo = {
+			name: promo,
+			enable: false
+		}
+		mysql.query(`insert into users (username, password, email, regIP, lastIP, adminData, promo) values (?, ?, ?, ?, ?, '{}', ?)`, [
+			username,
+			sha256(password),
+			email,
+			player.ip,
+			player.ip,
+			JSON.stringify(savePromo)
+		], (err, res) =>
+		{
+			if(err)return logger.error('user.create', err)
+
+			// временно
+			const userID = res.insertId
+			mysql.query(`insert into characters (userID, position, skin, clothes, keyBinds, chatsettings, quests) values (?, '{ "x": 0, "y": 0, "z": 0, "a": 0 }', '{ "genetic": { "mother": 0, "father": 0, "similarity": 0.5, "skinTone": 0.5 }, "hair": { "color": 0, "head": 0, "eyebrow": 0, "beard": 0, "breast": 0 }, "face": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "appearance": [0, 0, 0, 0, 0, 0, 0, 0, 0] }', '{}', '{}', '{}', '[]')`, [ userID ], (err, res) =>
+			{
+				if(err)return logger.error('user.create', err)
+
+				player.call('server::join:hide', [ { type: 'reg' } ])
+				user.load(player, res.insertId)
+			})
+		})
 	}
 
 	user.load = (player, character) =>
@@ -61,6 +105,9 @@ try
 				container.set('user', player.id, 'chatsettings', chatsettings)
 
 				container.set('user', player.id, 'nears', {})
+				container.set('user', player.id, 'rentVehicle', null)
+
+				player.call('server::user:updateUIKeys', [ container.get('user', player.id, 'keyBinds') ])
 
 				mysql.query('select * from users where id = ?', [ container.get('user', player.id, 'userID') ], (err, res) =>
 				{
@@ -82,6 +129,8 @@ try
 						container.set('user', player.id, 'user_lastDate', new Date())
 						container.set('user', player.id, 'user_lastIP', player.ip)
 
+						container.set('user', player.id, 'promo', JSON.parse(res[0]['promo']))
+
 						container.set('user', player.id, 'isLogged', true)
 						mp.players.forEach(pl =>
 						{
@@ -100,7 +149,36 @@ try
 							}
 						})
 
-						setTimeout(() => user.spawn(player, false, false), 500)
+						player.call('server::npc:createPeds', [ container.all('npc') ])
+
+						setTimeout(() =>
+						{
+							user.spawn(player, false, false)
+							user.addQuest(player, 'Первый тестовый квест', 'Тест', 'Это тестовый квест для тестов', [
+								{
+									name: 'Поговорить с Эдвардом',
+
+									maxProgress: 1,
+									progress: 0
+								},
+								{
+									name: 'Арендовать скутер',
+
+									maxProgress: 1,
+									progress: 0
+								}
+							], {
+								desc: "$ 100.000.000",
+								data: {
+									cash: 100000000
+								}
+							}, {
+								type: "System",
+								name: "system",
+								position: [ 0.0, 0.0, 0.0 ]
+							})
+
+						}, 500)
 					}
 					catch(e)
 					{
@@ -165,7 +243,7 @@ try
 
 		// Сохранение аккаута
 		mysql.query(`update users set username = ?, password = ?, email = ?, lastDate = ?, lastIP = ?,
-			admin = ?, adminData = ? where id = ?`, [
+			admin = ?, adminData = ?, promo = ? where id = ?`, [
 			container.get('user', player.id, 'user_username'),
 			container.get('user', player.id, 'user_password'),
 			container.get('user', player.id, 'user_email'),
@@ -173,6 +251,7 @@ try
 			container.get('user', player.id, 'user_lastIP'),
 			container.get('user', player.id, 'admin'),
 			JSON.stringify(container.get('user', player.id, 'adminData')),
+			JSON.stringify(container.get('user', player.id, 'promo')),
 			container.get('user', player.id, 'user_id')
 		], err =>
 		{
@@ -198,6 +277,8 @@ try
 			let spawn = enums.defaultSpawn[func.random(0, enums.defaultSpawn.length - 1)]
 			user.setPos(player, spawn[0], spawn[1], spawn[2], spawn[3], spawn[4])
 		}
+
+		setTimeout(() => user.save(player), 3000)
 	}
 
 	user.createCharacter = (player) =>
@@ -210,7 +291,21 @@ try
 		user.resetSkin(player)
 		user.resetClothes(player)
 
-		player.call('server::user:createCharacter')
+		try
+		{
+			player.call('server::user:createCharacter', [ container.get('user', player.id, 'userCreate'), {
+				settings: container.get('user', player.id, 'skin'),
+				gender: container.get('user', player.id, 'gender'),
+				name: container.get('user', player.id, 'charname').split(' ')[0],
+				surname: container.get('user', player.id, 'charname').split(' ')[1],
+				birthday: container.get('user', player.id, 'dateBirth'),
+				nationality: container.get('user', player.id, 'nationality')
+			} ])
+		}
+		catch(e)
+		{
+			logger.error('', e)
+		}
 	}
 
 	user.resetSkin = (player, gender = -1, data = null) =>
@@ -250,11 +345,20 @@ try
 
 	user.updateHud = player =>
 	{
+		let online = 0
+		mp.players.forEach(item =>
+		{
+			if(user.isLogged(item)) online ++
+		})
+
 		player.call('server::user:updateHUD', [ {
-			cash: container.get('user', player.id, 'cash'),
-			online: mp.players.length,
-			stock: enums.stockX2 ? '2': '0',
-			serverName: enums.serverName
+			money: [ container.get('user', player.id, 'cash'), 0 ],
+			food: [ 50, 50 ],
+			info: [ player.id, online ],
+			date: new Date().getTime().toString(),
+			serverDate: new Date().getTime().toString(),
+			temperature: 17,
+			region: [ 'Какой-то район', 'Какая-то улица' ]
 		} ])
 	}
 	user.isLogged = player =>
@@ -426,6 +530,194 @@ try
 		if(!user.isLogged(player))return {}
 		return container.get('user', player.id, 'id')
 	}
+
+
+	// quests
+	user.getQuest = (player, questName) =>
+	{
+		if(!user.isLogged(player))return false
+
+		let quest = false
+		container.get('user', player.id, 'quests').forEach(item =>
+		{
+			if(item.name === questName) quest = item
+		})
+		return quest
+	}
+	user.getQuestStatus = (player, questName) =>
+	{
+		if(!user.isLogged(player))return false
+
+		const quest = user.getQuest(player, questName)
+		if(!quest)return false
+
+		return quest.status
+	}
+	user.saveQuest = (player, questName, questSave) =>
+	{
+		if(!user.isLogged(player))return
+
+		const allQuests = container.get('user', player.id, 'quests')
+		if(allQuests.indexOf(user.getQuest(player, questName)) !== -1)
+		{
+			if(questSave === 'delete') allQuests.splice(allQuests.indexOf(user.getQuest(player, questName)), 1)
+			else allQuests[allQuests.indexOf(user.getQuest(player, questName))] = questSave
+		}
+
+		container.set('user', player.id, 'quests', allQuests)
+		user.save(player)
+	}
+	user.updateQuest = (player, questName, taskID, progress) =>
+	{
+		if(!user.isLogged(player))return
+
+		const quest = user.getQuest(player, questName)
+		if(!quest)return
+
+		if(taskID < 0 || taskID >= quest.tasks.length)return
+		if(quest.status === 'completed')return
+
+		quest.tasks[taskID].progress += progress
+		if(quest.tasks[taskID].progress >= quest.tasks[taskID].maxProgress)
+		{
+			let taskCompleted = 0
+			quest.tasks.forEach(item =>
+			{
+				if(item.progress >= item.maxProgress) taskCompleted ++
+			})
+
+			if(taskCompleted >= quest.tasks.length)
+			{
+				if(quest.owner.type === 'System')return user.completeQuest(player, questName)
+				else
+				{
+					user.notify(player, `Все задания квеста ${quest.name} были выполнены. Завершить квест можно у ${quest.owner.name}.`)
+					// user.setGPS(player, quest.owner.position.x, quest.owner.position.y, quest.owner.position.z)
+				}
+			}
+			else user.notify(player, `Задание по квесту ${quest.name} ${quest.tasks[taskID].name} было выполнено.<br>Осталось заданий: ${quest.tasks.length - taskCompleted}`, 'warning')
+		}
+
+		user.saveQuest(player, questName, quest)
+	}
+	user.completeQuest = (player, questName) =>
+	{
+		if(!user.isLogged(player))return
+
+		let quest = user.getQuest(player, questName)
+
+		if(!quest)return
+		if(quest.status === 'completed')return
+
+		if(quest.prize.data.cash) user.giveCash(player, quest.prize.data.cash)
+
+		user.notify(player, `Вы успешно завершили квест ${quest.name} и получили: ${quest.prize.desc}`)
+
+		if(quest.deleted === false) quest.status = 'completed'
+		else quest = 'delete'
+
+		user.saveQuest(player, questName, quest)
+	}
+	user.addQuest = (player, questName, line, desc, tasks, prize, owner, deleted = false) =>
+	{
+		try
+		{
+			if(!user.isLogged(player))return
+			if(user.getQuest(player, questName))return
+
+			const quests = container.get('user', player.id, 'quests')
+			quests.push({
+				name: questName,
+				line: line,
+				desc: desc,
+
+				tasks: tasks,
+				prize: prize,
+				owner: owner,
+
+				deleted: deleted,
+				status: 'process'
+			})
+
+			container.set('user', player.id, 'quests', quests)
+			user.save(player)
+
+			chat.local(player, `Вы получили новый квест: ${questName}.`, {
+				style: {
+					color: '#53df9d'
+				}
+			})
+		}
+		catch(e)
+		{
+			logger.error('user.addQuest', e)
+		}
+	}
+
+
+	user.toggleActionText = (player, toggle, desc = 'для взаимодействия', keyName = -1) =>
+	{
+		if(keyName === -1) keyName = user.getKeyBind(player, 'action').name
+		player.call('server::user:toggleActionText', [ toggle, keyName, desc ])
+	}
+
+	user.timer = () =>
+	{
+		mp.players.forEach(player =>
+		{
+			if(!user.isLogged(player))return
+
+			const rentVehicle = container.get('user', player.id, 'rentVehicle')
+			if(rentVehicle)
+			{
+				rentVehicle.timer --
+
+				if(rentVehicle.timer === 1800) user.notify(player, 'У Вас осталось 30 минут на аренду транспорта', 'warning')
+				else if(rentVehicle.timer === 600) user.notify(player, 'У Вас осталось 10 минут на аренду транспорта', 'warning')
+				else if(rentVehicle.timer === 300) user.notify(player, 'У Вас осталось 5 минут на аренду транспорта', 'warning')
+				else if(rentVehicle.timer === 60) user.notify(player, 'У Вас осталась 1 минута на аренду транспорта', 'warning')
+
+				if(rentVehicle.timer <= 0)
+				{
+					user.notify(player, 'Аренда Вашего транспорт окончена', 'warning')
+					vehicles.destroy(rentVehicle.vehicle.id)
+
+					container.set('user', player.id, 'rentVehicle', null)
+				}
+			}
+		})
+	}
+
+	// [
+	// 	{
+	// 		name: 'Первые деньги',
+	// 		line: 'Начало',
+	// 		desc: 'Всем нужны деньги, поэтому давай работать',
+	// 		tasks: [
+	// 			{
+	// 				name: 'Заработать $ 5.000',
+	//
+	// 				maxProgress: 5000.0,
+	// 				progress: 2500.0
+	// 			}
+	// 		],
+	// 		prize: {
+	// 			desc: '$ 5.000.00',
+	// 			data:
+	// 			{
+	// 				cash: 5000
+	// 			}
+	// 		},
+	// 		owner: {
+	// 			type: 'NPC',
+	// 			name: 'Майлка',
+	// 			position: [ x, y, z ]
+	// 		},
+	//
+	// 		status: 'process',
+	// 		deleted: false
+	// 	}
+	// ]
 
 	// inventory
 	// user.inventory = {}

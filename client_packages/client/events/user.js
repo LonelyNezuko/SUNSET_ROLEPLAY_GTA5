@@ -7,34 +7,77 @@ try
 
 	const chat = require('./client/chat')
 	const func = require('./client/modules/func')
+	const enums = require('./client/modules/enums')
 
 	mp.events.add({
-		'server::user:joinShow': username =>
+		'ui::user:cameraEdit': data =>
 		{
-			if(mp.storage.data.authRemember !== undefined)
-			{
-				ui.call('UI::join', {
-					cmd: "remember",
-					data: mp.storage.data.authRemember
-				})
-			}
+			data = JSON.parse(data)
 
-			ui.call('UI::join', {
-				cmd: "toggle",
-				data: true
+			if(!user.cameraEdit
+				|| !user.camera)
+			{
+				ui.call('UI', {
+					cmd: 'cameraEdit',
+					data: false
+				})
+
+				return
+			}
+			if(data.x < -300
+				|| data.x > 300
+				|| data.y < -700
+				|| data.y > 300)return
+
+			const playerPosition = mp.players.local.position
+
+			let position = new mp.Vector3(playerPosition.x, playerPosition.y, playerPosition.z + 0.5)
+			let positionAtCoord = [ playerPosition.x, playerPosition.y, playerPosition.z + 0.5]
+
+			logger.log('', user.camera.getRot(), user.camera.getCoord())
+
+			if(data.which === 1)
+			{
+				position.y += data.x / 1000
+				positionAtCoord[1] += data.x / 1000
+			}
+			else if(data.which === 3)
+			{
+				position.z += data.y / 1000
+				positionAtCoord[2] += data.y / 1000
+			}
+			else return false
+
+	        const cameraPosition = func.getCameraOffset(new mp.Vector3(position.x, position.y, position.z), mp.players.local.getHeading() + 90, 1.5)
+			// logger.log('ui::user:cameraEdit', cameraPosition, position, positionAtCoord)
+
+			user.camera.setCoord(cameraPosition.x, cameraPosition.y, cameraPosition.z)
+			user.camera.pointAtCoord(positionAtCoord[0], positionAtCoord[1], positionAtCoord[2])
+		},
+
+		'server::user:joinShow': value =>
+		{
+			const data = {
+				online: value.online
+			}
+			if(mp.storage.data.authRemember !== undefined) data.auth = [ mp.storage.data.authRemember.username, mp.storage.data.authRemember.password ]
+
+			ui.call('UI::auth', {
+				cmd: "show",
+				data: data
 			})
 			user.cursor(true, false)
 
-			if(mp.storage.data.authRemember !== undefined
-				&& mp.storage.data.authRemember.autoLogin === true)
-			{
-				setTimeout(() =>
-				{
-					ui.call('UI::join', {
-						cmd: "autoLogin"
-					})
-				}, 500)
-			}
+			// if(mp.storage.data.authRemember !== undefined
+			// 	&& mp.storage.data.authRemember.autoLogin === true)
+			// {
+			// 	setTimeout(() =>
+			// 	{
+			// 		ui.call('UI::join', {
+			// 			cmd: "autoLogin"
+			// 		})
+			// 	}, 500)
+			// }
 		},
 
 		'server::user:toggleHUD': toggle =>
@@ -52,6 +95,14 @@ try
 		'server::user:notify': (text, type) =>
 		{
 			user.notify(text, type)
+		},
+		'server::user:setCamera': (position, atCoord, data) =>
+		{
+			user.setCamera(position, atCoord, data)
+		},
+		'server::user:destroyCamera': () =>
+		{
+			user.destroyCamera()
 		},
 		'server::user:loadScreen': (toggle, duration) =>
 		{
@@ -72,94 +123,81 @@ try
 			user.setClothes(clothes)
 		},
 
-		'server::user:createCharacter': () =>
+		'server::user:createCharacter': (userCreate, settings) =>
 		{
 			mp.players.local.freezePosition(true)
-
-			const playerPosition = mp.players.local.position
-			const cameraValues = {
-				angel: 360,
-				dist: 0,
-				height: 0.1
-			}
-		    const cameraPosition = func.getCameraOffset(new mp.Vector3(playerPosition.x, playerPosition.y, playerPosition.z + cameraValues.height), cameraValues.angle, cameraValues.dist)
 
 			setTimeout(() =>
 			{
 				user.toggleHud(false)
-				ui.call('UI::userCreate', {
-					cmd: 'toggle',
-					data: true
+				ui.call('UI::createChar', {
+					cmd: 'show',
+					data: !userCreate ? true : false
 				})
 
-				user.setCamera(new mp.Vector3(437.9560241699219, -993.4720825195312, 31.3), [ 435.93829345703121, -993.4317993164062, 31.3 ], 30)
-				user.cameraEdit = true
+				const data = settings.settings
+				data.genetic.gender = settings.gender
+				data.genetic.name = settings.name
+				data.genetic.surname = settings.surname
+				data.genetic.birthday = settings.birthday
+				data.genetic.nationality = settings.nationality
 
+				logger.log('', data)
+
+				// ui.call('UI::createChar', {
+				// 	cmd: 'update',
+				// 	data: data
+				// })
+
+				user.setCameraToPlayer()
 				user.cursor(true, false)
+
 			}, 1200)
 		},
-		'ui::user:updateCharacter': data =>
+		'ui::createChar:update': data =>
 		{
 			data = JSON.parse(data)
 
-			logger.log('ui::user:updateCharacter', data.settings, data.gender)
-			user.resetSkin(data.settings, data.gender)
+			const gender = data.genetic.gender
+			const clothes = data.clothes
 
-			const clothes = [
-	            {
-	                mask: 0,
-	                torsos: 15,
-	                legs: 18,
-	                bags: 0,
-	                shoes: 34,
-	                accessories: 0,
-	                undershirts: 15,
-	                armour: 0,
-	                decals: 0,
-	                tops: 15
-	            },
-	            {
-	                mask: 0,
-	                torsos: 15,
-	                legs: 17,
-	                bags: 0,
-	                shoes: 35,
-	                accessories: 0,
-	                undershirts: 15,
-	                armour: 0,
-	                decals: 0,
-	                tops: 15
-	            }
-	        ]
-			user.setClothes(clothes[data.gender])
+			delete data.genetic.gender
+			delete data.clothes
+
+			logger.log('ui::user:updateCharacter', data.genetic, data.face, data.hair, data.appearance, gender, clothes)
+
+			user.resetSkin(data, gender)
+
+			user.setClothes(enums.createCharClothes[!gender ? 0 : 1][0][clothes[0]])
+			user.setClothes(enums.createCharClothes[!gender ? 0 : 1][1][clothes[1]])
+			user.setClothes(enums.createCharClothes[!gender ? 0 : 1][2][clothes[2]])
 		},
 		'ui::user:changeCameraCharacter': data =>
 		{
 			data = JSON.parse(data)
 
-			if(data.camera === 'global')
-			{
-				user.camera.setCoord(437.9560241699219, -993.4720825195312, 31.3)
-				user.camera.pointAtCoord(435.93829345703121, -993.4317993164062, 31.3)
-				user.camera.setFov(30)
-			}
-			else if(data.camera === 'face')
-			{
-				user.camera.setCoord(437.9560241699219, -993.4720825195312, 31.3)
-				user.camera.pointAtCoord(435.93829345703121, -993.4317993164062, 31.3)
-				user.camera.setFov(20)
-			}
+			// if(data.camera === 'global')
+			// {
+				// user.camera.setCoord(437.9560241699219, -993.4720825195312, 31.3)
+				// user.camera.pointAtCoord(435.93829345703121, -993.4317993164062, 31.3)
+			// 	user.camera.setFov(30)
+			// }
+			// else if(data.camera === 'face')
+			// {
+			// 	user.camera.setCoord(437.9560241699219, -993.4720825195312, 31.3)
+			// 	user.camera.pointAtCoord(435.93829345703121, -993.4317993164062, 31.3)
+			// 	user.camera.setFov(20)
+			// }
 		},
-		'ui::user:saveCharacter': data =>
+		'ui::createChar:create': data =>
 		{
 			mp.events.callRemote('client::user:saveCharacter', data)
 		},
 		'server::user:closeUserCreate': () =>
 		{
 			user.toggleHud(true)
-			ui.call('UI::userCreate', {
-				cmd: 'toggle',
-				data: false
+			ui.call('UI::createChar', {
+				cmd: 'hide'
 			})
 
 			user.destroyCamera()
@@ -179,67 +217,76 @@ try
 
 		'server::user:toggleSpeedometer': (status, data = {}) =>
 		{
-			if(status)
-			{
-				if(data.engine === true) ui.call('UI::hud', {
-						cmd: 'speedometerOn'
-					})
-				else if(data.engine === false) ui.call('UI::hud', {
-						cmd: 'speedometerOff'
-					})
-			}
-
+			data.show = status
 			ui.call('UI::hud', {
-				cmd: 'speedometerToggle',
-				data: status
+				cmd: 'update',
+				data: {
+					speed: data
+				}
 			})
 
-			if(status)
-			{
-				ui.call('UI::hud', {
-					cmd: 'speedometerMileage',
-					data: parseInt(data.mileage)
-				})
-				ui.call('UI::hud', {
-					cmd: 'speedometerFuel',
-					data: parseFloat(data.fuel)
-				})
-				ui.call('UI::hud', {
-					cmd: 'speedometerLocked',
-					data: data.locked
-				})
-
-				user.vehicleMileage = 0.0
-			}
+			if(status) user.vehicleMileage = 0.0
 		},
 		'server::user:engineSpeedometer': status =>
 		{
-			if(!status) ui.call('UI::hud', {
-					cmd: 'speedometerOff'
-				})
-			else ui.call('UI::hud', {
-					cmd: 'speedometerOn'
-				})
+			ui.call('UI::hud', {
+				cmd: 'update',
+				data: {
+					speed: {
+						engine: status
+					}
+				}
+			})
 		},
 		'server::user:mileageSpeedometer': mileage =>
 		{
 			ui.call('UI::hud', {
-				cmd: 'speedometerMileage',
-				data: parseInt(mileage)
+				cmd: 'update',
+				data: {
+					speed: {
+						mileage: parseInt(mileage)
+					}
+				}
 			})
 		},
 		'server::user:fuelSpeedometer': fuel =>
 		{
 			ui.call('UI::hud', {
-				cmd: 'speedometerFuel',
-				data: parseFloat(fuel)
+				cmd: 'update',
+				data: {
+					speed: {
+						fuel: parseInt(fuel)
+					}
+				}
 			})
 		},
 		'server::user:lockedSpeedometer': status =>
 		{
 			ui.call('UI::hud', {
-				cmd: 'speedometerLocked',
-				data: status
+				cmd: 'update',
+				data: {
+					speed: {
+						doors: status
+					}
+				}
+			})
+		},
+
+		'server::user:toggleActionText': (toggle, keyName, desc) =>
+		{
+			user.toggleActionText(toggle, keyName, desc)
+		},
+
+		'server::user:updateUIKeys': keys =>
+		{
+			const resultKeys = []
+			for(var key in keys)
+			{
+				resultKeys.push(keys[key].key)
+			}
+			ui.call('UI::keys', {
+				cmd: 'update',
+				data: resultKeys
 			})
 		}
 	})

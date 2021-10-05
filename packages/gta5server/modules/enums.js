@@ -18,9 +18,12 @@ try
 
         'charname',
         'dateBirth',
+        'nationality',
 
         'keyBinds',
-        'chatsettings'
+        'chatsettings',
+
+        'quests'
     ]
     enums.housesVariables = [
         'type',
@@ -37,12 +40,20 @@ try
         'garage',
         'locked'
     ]
+    enums.bizVariables = [
+        'type',
+        'owner',
+
+        'position',
+        'dimension',
+
+        'locked',
+        'price'
+    ]
 
     enums.defaultSpawn = [
-        [ 191.79483032226562, -924.42724609375, 30.686996459960938, 140.24330139160156, 0 ],
-        [ 207.73556518554688, -936.6594848632812, 30.686809539794922, 147.14170837402344, 0 ],
-        [ 201.3427276611328, -946.2774047851562, 30.69178581237793, -33.844200134277344, 0 ],
-        [ 186.85000610351562, -934.3627319335938, 30.68680763244629, -35.786529541015625, 0 ]
+        [ -99.40806579589844, 6333.5263671875, 31.4903621673584, -55.324378967285156, 0 ],
+        [ -92.03973388671875, 6328.3486328125, 31.4903507232666, -52.91796875, 0 ]
     ]
 
     enums.stockX2 = false
@@ -63,6 +74,90 @@ try
         tops: 11
     }
 
+    enums.createCharClothes = [
+        [ // Мужской
+            [ // Верх
+                {
+                    tops: 15,
+                    torsos: 15,
+                    undershirts: 15
+                },
+                { // Мужской (футболка)
+                    tops: 0,
+                    torsos: 0,
+                    undershirts: 15
+                },
+                { // Мужской (майка)
+                    tops: 16,
+                    torsos: 0,
+                    undershirts: 15
+                }
+            ],
+            [ // Низ
+                {
+                    legs: 18
+                },
+                { // Мужской (Шорты)
+                    legs: 2
+                },
+                { // Мужской (штаны)
+                    legs: 0
+                }
+            ],
+            [ // Обувь
+                {
+                    shoes: 34
+                },
+                { // Мужской (кросовки)
+                    shoes: 1
+                },
+                { // Мужской (шлепки)
+                    shoes: 5
+                }
+            ]
+        ],
+        [ // Женский
+            [ // Верх
+                {
+                    tops: 15,
+                    torsos: 15,
+                    undershirts: 15
+                },
+                { // Женский (футболка)
+                    tops: 2,
+                    torsos: 2,
+                    undershirts: 15
+                },
+                { // Женский (майка)
+                    tops: 0,
+                    torsos: 0,
+                    undershirts: 15
+                }
+            ],
+            [ // Низ
+                {
+                    legs: 15
+                },
+                { // Женский (шорты)
+                    legs: 2
+                },
+                { // Женский (штаны)
+                    legs: 0
+                }
+            ],
+            [ // Обувь
+                {
+                    shoes: 15
+                },
+                { // Женский (кросовки)
+                    shoes: 3
+                },
+                { // Женский (шлепки)
+                    shoes: 5
+                }
+            ]
+        ]
+    ]
     enums.clothes = {
         'none': [
             { // male
@@ -144,27 +239,46 @@ try
 
         'createhouse': 5,
         'deletehouse': 5,
-        'edithouse': 5
+        'edithouse': 5,
+
+        'createbiz': 5,
+        'deletebiz': 5
     }
 
     enums.keyDefaultBinds =
     {
         toggleVehicleEngine: {
-            name: "N",
-            key: 78
+            name: "2",
+            key: 50,
+
+            desc: "Завести/Заглушить двигатель"
         },
         toggleVehicleLocked: {
             name: "L",
-            key: 76
+            key: 76,
+
+            desc: "Закрыть/Открыть двери транспорта"
         },
         toggleVehicleBelt: {
             name: "K",
-            key: 75
+            key: 75,
+
+            desc: "Ремень безопастности"
         },
 
         action: {
             name: "E",
-            key: 69
+            key: 69,
+
+            desc: "Взаимодействие"
+        },
+
+        fastAdminMenu: {
+            name: '8',
+            key: 56,
+
+            desc: "Быстрое админ-меню",
+            admin: 1
         }
     }
 
@@ -176,7 +290,7 @@ try
     enums.vehiclesData =
     {
         't20': {
-            maxSpeed: 120,
+            maxSpeed: 300,
 
             maxFuel: 40,
             expensFuel: 25,
@@ -185,6 +299,17 @@ try
 
             type: "car",
             typeName: "Супер-кар"
+        },
+        'faggio': {
+            maxSpeed: 120,
+
+            maxFuel: 4,
+            expensFuel: 4,
+
+            price: 1,
+
+            type: "motorcycles",
+            typeName: "Скутер"
         }
     }
 
@@ -253,6 +378,31 @@ try
             }
         ]
     ]
+
+    enums.bizType = [
+        "Магазин 24/7",
+        "Аммунация"
+    ]
+    enums.bizDefaultSettings = [
+        { // Магазин 24.7
+            price: 250990,
+            blipSprite: 52
+        },
+        { // Аммунация
+            price: 650250,
+            blipSprite: 110
+        }
+    ]
+
+    enums.rentPrices = {
+        moto: 50
+    }
+
+    enums.questStatusName = {
+        'process': "Выполняется",
+        'can complete': "Можно завершить",
+        'completed': "Завершен"
+    }
 
     module.exports = enums
 }

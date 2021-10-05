@@ -27,14 +27,36 @@ try
             container.set('user', player.id, 'username', player.name)
             container.set('user', player.id, 'isLogged', false)
 
-			player.call('server::user:joinShow', [ player.name ])
+            let online = 0
+            mp.players.forEach(item =>
+            {
+                if(user.isLogged(item)) online ++
+            })
+
+			player.call('server::user:joinShow', [ {
+                online: online
+            } ])
     	},
 
         'client::user:saveCharacter': (player, data) =>
         {
             data = JSON.parse(data)
 
-            mysql.query('select id from characters where charname = ?', [ data.firstName + ' ' + data.lastName ], (err, res) =>
+            const gender = data.genetic.gender
+            const charName = data.genetic.name + ' ' + data.genetic.surname
+            const dateBirth = data.genetic.birthday
+            const clothes = data.clothes
+            const nationality = data.genetic.nationality
+
+            delete data.genetic.gender
+            delete data.genetic.name
+            delete data.genetic.surname
+            delete data.genetic.birthday
+            delete data.clothes
+            delete data.genetic.nationality
+
+            logger.log('client::user:saveCharacter', nationality, gender, charName, dateBirth, clothes, data.genetic, data.face, data.appearance)
+            mysql.query('select id from characters where charname = ?', [ charName ], (err, res) =>
             {
                 if(err)return logger.error('client::user:saveCharacter', err)
                 if(res.length)return player.call('server::user:userCreateError')
@@ -42,24 +64,28 @@ try
                 player.call('server::user:closeUserCreate')
                 setTimeout(() =>
                 {
-                    container.set('user', player.id, 'skin', data.settings)
+                    container.set('user', player.id, 'skin', data)
 
                     if(container.get('user', player.id, 'userCreate') === 0)
                     {
                         container.set('user', player.id, 'userCreate', 1)
-                        container.set('user', player.id, 'gender', data.gender)
+                        container.set('user', player.id, 'gender', !gender ? 0 : 1)
 
-                        container.set('user', player.id, 'charname', data.firstName + ' ' + data.lastName)
-                        container.set('user', player.id, 'dateBirth', data.dateBirth)
+                        container.set('user', player.id, 'charname', charName)
+                        container.set('user', player.id, 'dateBirth', dateBirth)
+
+                        container.set('user', player.id, 'nationality', nationality)
 
                         user.resetClothes(player, true)
-                        user.setClothes(player, 'start')
+
+                        user.setClothes(player, enums.createCharClothes[!gender ? 0 : 1][0][clothes[0]], true, false)
+                        user.setClothes(player, enums.createCharClothes[!gender ? 0 : 1][1][clothes[1]], true, false)
+                        user.setClothes(player, enums.createCharClothes[!gender ? 0 : 1][2][clothes[2]], true, false)
 
                         user.spawn(player, true)
                     }
                     else user.spawn(player)
 
-                    setTimeout(() => user.save(player), 2000)
                 }, 1000)
             })
         },

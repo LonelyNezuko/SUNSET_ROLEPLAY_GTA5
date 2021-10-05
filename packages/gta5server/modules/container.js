@@ -5,7 +5,9 @@ try
     container.data = {
         user: {},
         vehicles: {},
-        houses: {}
+        houses: {},
+        biz: {},
+        npc: {}
     }
 
     container.has = (type, id, key) =>

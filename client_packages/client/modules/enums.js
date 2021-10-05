@@ -14,6 +14,90 @@ enums.clothesComponentID = {
     decals: 10,
     tops: 11
 }
+enums.createCharClothes = [
+    [ // Мужской
+        [ // Верх
+            {
+                tops: 15,
+                torsos: 15,
+                undershirts: 15
+            },
+            { // Мужской (футболка)
+                tops: 0,
+                torsos: 0,
+                undershirts: 15
+            },
+            { // Мужской (майка)
+                tops: 16,
+                torsos: 0,
+                undershirts: 15
+            }
+        ],
+        [ // Низ
+            {
+                legs: 18
+            },
+            { // Мужской (Шорты)
+                legs: 2
+            },
+            { // Мужской (штаны)
+                legs: 0
+            }
+        ],
+        [ // Обувь
+            {
+                shoes: 34
+            },
+            { // Мужской (кросовки)
+                shoes: 1
+            },
+            { // Мужской (шлепки)
+                shoes: 5
+            }
+        ]
+    ],
+    [ // Женский
+        [ // Верх
+            {
+                tops: 15,
+                torsos: 15,
+                undershirts: 15
+            },
+            { // Женский (футболка)
+                tops: 2,
+                torsos: 2,
+                undershirts: 15
+            },
+            { // Женский (майка)
+                tops: 0,
+                torsos: 0,
+                undershirts: 15
+            }
+        ],
+        [ // Низ
+            {
+                legs: 15
+            },
+            { // Женский (шорты)
+                legs: 2
+            },
+            { // Женский (штаны)
+                legs: 0
+            }
+        ],
+        [ // Обувь
+            {
+                shoes: 15
+            },
+            { // Женский (кросовки)
+                shoes: 3
+            },
+            { // Женский (шлепки)
+                shoes: 5
+            }
+        ]
+    ]
+]
 
 enums.interiors =
 [

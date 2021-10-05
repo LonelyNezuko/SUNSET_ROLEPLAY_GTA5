@@ -30,6 +30,8 @@ try
 
                 houses.refresh(i)
             })
+
+            logger.mysqlLog(`Домов загружено: ${res.length}`)
         })
     }
 
@@ -222,9 +224,6 @@ try
         let randomInterior = func.random(0, enums.housesDefaultSettings[type][classes].interiors.length)
         if(randomInterior >= enums.housesDefaultSettings[type][classes].interiors.length) randomInterior = enums.housesDefaultSettings[type][classes].interiors.length - 1
 
-        let randomInteriorGarage = func.random(0, enums.housesDefaultSettings[type][classes].garages.length)
-        if(randomInteriorGarage >= enums.housesDefaultSettings[type][classes].garages.length) randomInteriorGarage = enums.housesDefaultSettings[type][classes].garages.length - 1
-
         let garage = JSON.stringify({
                 house: {
                     x: 0.0,
@@ -251,7 +250,12 @@ try
                     a: 0
                 }
             })
-        if(type === 0) garage = JSON.stringify({
+        if(type === 0)
+        {
+            let randomInteriorGarage = func.random(0, enums.housesDefaultSettings[type][classes].garages.length)
+            if(randomInteriorGarage >= enums.housesDefaultSettings[type][classes].garages.length) randomInteriorGarage = enums.housesDefaultSettings[type][classes].garages.length - 1
+
+            garage = JSON.stringify({
                 house: {
                     x: enums.housesDefaultSettings[type][classes].garages[randomInteriorGarage][0],
                     y: enums.housesDefaultSettings[type][classes].garages[randomInteriorGarage][1],
@@ -277,6 +281,7 @@ try
                     a: 0
                 }
             })
+        }
 
         mysql.query(`insert into houses (type, class, position, dimension, interior, price, owner, garage) values (?, ?, ?, ?, ?, ?, '{ "id": 0, "name": "Неимеется" }', ?)`, [
             type,
@@ -315,19 +320,16 @@ try
                 const id = container.free('houses')
                 if(houses.isState(id))return callback(false)
 
-                res.forEach((elem, i) =>
+                enums.housesVariables.forEach(item =>
                 {
-                    enums.housesVariables.forEach(item =>
-                    {
-                        container.set('houses', id, item, func.isJSON(elem[item]) ? JSON.parse(elem[item]) : elem[item])
-                    })
-
-                    container.set('houses', id, 'id', elem.id)
-                    container.set('houses', id, 'state', true)
-
-                    houses.refresh(id)
-                    return callback(id)
+                    container.set('houses', id, item, func.isJSON(res[0][item]) ? JSON.parse(res[0][item]) : res[0][item])
                 })
+
+                container.set('houses', id, 'id', res[0]['id'])
+                container.set('houses', id, 'state', true)
+
+                houses.refresh(id)
+                return callback(id)
             })
         })
     }
@@ -420,6 +422,8 @@ try
 
     houses.nearPlayer = (player, id = -1) =>
     {
+        if(!user.isLogged(player))return -1
+
         if(id == -1) id = user.getNears(player).house
         if(id === undefined)return -1
 
@@ -623,11 +627,7 @@ try
             && !player.vehicle
             && player.seat !== 0)return
 
-        if(container.get('user', player.id, '_actionNotifyCooldown') < +new Date)
-        {
-            user.notify(player, `Нажмите ${user.getKeyBind(player, 'action').name} для взаимодействия`)
-            container.set('user', player.id, '_actionNotifyCooldown', +new Date + 2000)
-        }
+        user.toggleActionText(player, true)
     }
     houses.exitColshape = (player, shape) =>
     {
@@ -638,6 +638,8 @@ try
         user.removeNear(player, 'houseInterior')
         user.removeNear(player, 'houseGarage')
         user.removeNear(player, 'houseGarageInterior')
+
+        user.toggleActionText(player, false)
     }
 
     houses.action = player =>

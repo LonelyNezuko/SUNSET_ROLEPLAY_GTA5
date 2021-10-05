@@ -5,7 +5,7 @@ const user = require('../user')
 
 mp.events.add('client::noclip:saveCamCoords', (player, position, pointAtCoord, name = 'No name') =>
 {
-    if(user.getAdmin() < 5)return
+    if(user.getAdmin(player) < 5)return
 
     const pos = JSON.parse(position);
     const point = JSON.parse(pointAtCoord);

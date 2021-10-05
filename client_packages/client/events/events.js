@@ -6,6 +6,9 @@ try
     require('./client/events/user')
 	require('./client/events/hud')
 	require('./client/events/vehicles')
+	require('./client/events/menuList')
+	require('./client/events/npc')
+	require('./client/events/npcDialog')
 
 	const ui = require('./client/ui/index')
 	const user = require('./client/user')
@@ -25,8 +28,12 @@ try
 					&& mp.players.local.vehicle.getIsEngineRunning())
 				{
 					ui.call('UI::hud', {
-						cmd: 'speedometerSpeed',
-						data: parseInt(speed)
+						cmd: 'update',
+						data: {
+							speed: {
+								speed: speed
+							}
+						}
 					}, false)
 				}
 
@@ -42,10 +49,9 @@ try
 			}
 		},
 
-		'ui::tryKey': data =>
+		'ui::keys:try': data =>
 		{
-			data = JSON.parse(data)
-			mp.events.callRemote('client::enterKey', data.key)
+			mp.events.callRemote('client::enterKey', parseInt(data))
 		},
 
 		'playerEnterVehicle': () =>

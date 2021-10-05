@@ -10,6 +10,9 @@ try
 
     const vehicles = require('../property/vehicles')
     const houses = require('../property/houses')
+    const biz = require('../property/biz')
+
+    const admin = require('../admin')
 
     commandsAdd({
         'spawn': {
@@ -95,26 +98,9 @@ try
             settings: {
                 admin: enums.commandsAdmin.createvehicle
             },
-            func: (player, str, [ model, type, typeID ]) =>
+            func: player =>
             {
-                if(!model
-                    || !type
-                    || typeID === undefined)return user.notify(player, '/createvehicle [model] [owner type] [owner id]', 'error')
-
-                typeID = parseInt(typeID)
-                if(typeID < 1)return user.notify(player, 'owner id не может быть меньше 1', 'error')
-
-                let owner = {}
-                owner[type] = typeID
-
-                const veh = vehicles.create(model, [ player.position.x, player.position.y, player.position.z ], {
-                    heading: player.heading,
-                    owner: owner,
-                    save: true
-                })
-                if(!veh)return user.notify(player, 'Не удалось создать транспорт', 'error')
-
-                user.notify(player, 'Транспорт был успешно создан', 'warning')
+                admin.showCreateVehicleMenu(player)
             }
         },
         'deletevehicle': {
@@ -135,28 +121,9 @@ try
             settings: {
                 admin: enums.commandsAdmin.createhouse
             },
-            func: (player, str, [ type, classes, price ]) =>
+            func: player =>
             {
-                if(type === undefined
-                    || classes === undefined)return user.notify(player, '/createhouse [type (0 - Дом, 1 - Квартира)] [class (0 - Бюджет, 1 - Средний, 2 - Люкс)] (price)', 'error')
-
-                type = parseInt(type)
-                classes = parseInt(classes)
-                price = price === undefined ? 0 : parseInt(price)
-
-                if(type < 0 || type > enums.housesType.length - 1)return user.notify(player, `Тип дома/квартиры  0 - ${enums.housesType.length - 1}`, 'error')
-                if(classes < 0 || classes > enums.housesClass.length - 1)return user.notify(player, `Тип дома/квартиры  0 - ${enums.housesClass.length - 1}`, 'error')
-
-                const data = {}
-                if(price > 0) data.price = price
-
-                data.dimension = player.dimension
-
-                houses.create(type, classes, [ player.position.x, player.position.y, player.position.z - 1, player.position.a ], data, status =>
-                {
-                    if(status === false)return user.notify(player, 'Не удалось создать дом', 'error')
-                    user.notify(player, `Вы успешно создали дом ${status}`, 'warning')
-                })
+                admin.showCreateHouseMenu(player)
             }
         },
         'deletehouse': {
@@ -169,7 +136,7 @@ try
                 if(id === -1)return user.notify(player, 'Вы должны стоять возле дома/квартиры', 'error')
 
                 houses.delete(id)
-                user.notify(player, `Вы успешно удалили дом ${id}`, 'warning')
+                user.notify(player, `Вы успешно удалили дом #${id}`, 'warning')
             }
         },
         'edithouse': {
@@ -232,7 +199,30 @@ try
 
                 houses.tpInterior(player, id, true)
             }
-        }
+        },
+
+        'createbiz': {
+            settings: {
+                admin: enums.commandsAdmin.createbiz
+            },
+            func: player =>
+            {
+                admin.showCreateBizMenu(player)
+            }
+        },
+        'deletebiz': {
+            settings: {
+                admin: enums.commandsAdmin.deletebiz
+            },
+            func: player =>
+            {
+                const id = biz.nearPlayer(player)
+                if(id === -1)return user.notify(player, 'Вы должны стоять возле бизнеса', 'error')
+
+                biz.delete(id)
+                user.notify(player, `Вы успешно удалили бизнес ${id}`, 'warning')
+            }
+        },
     })
 }
 catch(e)

@@ -17,6 +17,8 @@ try
             if(err)return logger.error('vehicles.load', err)
 
             let veh
+            let count = 0
+
             res.forEach(item =>
             {
                 veh = vehicles.create(item.model, [ JSON.parse(item.position).x, JSON.parse(item.position).y, JSON.parse(item.position).z ], {
@@ -32,10 +34,13 @@ try
 
                 if(veh)
                 {
+                    count ++
                     container.set('vehicles', veh.id, 'id', item.id)
                     container.set('vehicles', veh.id, 'save', true)
                 }
             })
+
+            logger.mysqlLog(`Транспорта загружено: ${res.length}, из них ${count} создано`)
         })
     }
     vehicles.create = (model, position, data = {}) =>
@@ -137,6 +142,24 @@ try
         ])
     }
 
+    vehicles.createRent = (player, model, position) =>
+    {
+        const veh = vehicles.create(model, [ position[0], position[1], position[2] ], {
+            number: "RENT",
+            heading: position[3],
+            dimension: player.dimension,
+            owner: {
+                rent: user.getID(player)
+            }
+        })
+
+        container.set('user', player.id, 'rentVehicle', {
+            vehicle: veh,
+            timer: 3600
+        })
+        return veh
+    }
+
     vehicles.isRights = (vehid, player) =>
     {
         const veh = vehicles.getVehicle(vehid)
@@ -145,6 +168,8 @@ try
 
         if(container.get('vehicles', veh.id, 'owner').player
             && container.get('vehicles', veh.id, 'owner').player !== container.get('user', player.id, 'id'))return false
+        if(container.get('vehicles', veh.id, 'owner').rent
+            && container.get('vehicles', veh.id, 'owner').rent !== container.get('user', player.id, 'id'))return false
 
         return true
     }
@@ -179,6 +204,21 @@ try
     {
         if(!vehicles.getVehicle(vehid))return false
         return container.get('vehicles', vehid, 'model')
+    }
+    vehicles.getTypeName = vehid =>
+    {
+        if(!vehicles.getVehicle(vehid))return false
+
+        const type = container.get('vehicles', vehid, 'owner')
+
+        if(type.player)return 'Игрока'
+        return 'Ничей'
+    }
+
+    vehicles.getOwner = vehid =>
+    {
+        if(!vehicles.getVehicle(vehid))return false
+        return container.get('vehicles', vehid, 'owner')
     }
 
     vehicles.setEngine = (vehid, status, error = false) =>
@@ -287,10 +327,10 @@ try
             vehicle.engine = vehicles.getEngine(vehicle.id)
             player.call('server::user:toggleSpeedometer', [ true, {
                 engine: vehicles.getEngine(vehicle.id),
-                mileage: container.get('vehicles', vehicle.id, 'mileage'),
-                fuel: container.get('vehicles', vehicle.id, 'fuel'),
+                mileage: parseInt(container.get('vehicles', vehicle.id, 'mileage')),
+                fuel: [ parseInt(container.get('vehicles', vehicle.id, 'fuel')), enums.vehiclesData[vehicles.getModel(vehicle.id)].maxFuel ],
                 lights: vehicles.getLights(vehicle.id),
-                locked: vehicles.getLocked(vehicle.id)
+                doors: vehicles.getLocked(vehicle.id)
             } ])
         }
     }

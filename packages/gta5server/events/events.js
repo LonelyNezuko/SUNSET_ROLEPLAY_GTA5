@@ -8,14 +8,18 @@ try
     require('./chat')
     require('./vehicles')
     require('./keys')
-    // require('./menuList')
+    require('./menuList')
     require('./ui')
+    require('./npcDialog')
 
     const user = require('../user')
     const container = require('../modules/container')
 
     const vehicles = require('../property/vehicles')
     const houses = require('../property/houses')
+    const biz = require('../property/biz')
+
+    const npc = require('../modules/npc')
 
     mp.events.add(
     {
@@ -29,6 +33,7 @@ try
             user.save(player)
 
             if(container.get('user', player.id, '/veh') !== null) vehicles.destroy(container.get('user', player.id, '/veh'))
+            if(container.get('user', player.id, 'rentVehicle') !== null) vehicles.destroy(container.get('user', player.id, 'rentVehicle').vehicle.id)
 
             container.delete('user', player.id)
         },
@@ -39,10 +44,16 @@ try
         'playerEnterColshape': (player, shape) =>
         {
             houses.enterColshape(player, shape)
+            biz.enterColshape(player, shape)
+
+            npc.enterColshape(player, shape)
         },
         'playerExitColshape': (player, shape) =>
         {
             houses.exitColshape(player, shape)
+            biz.exitColshape(player, shape)
+
+            npc.exitColshape(player, shape)
         }
     })
 }

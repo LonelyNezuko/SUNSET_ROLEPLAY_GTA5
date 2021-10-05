@@ -18,6 +18,7 @@ try
             func: player =>
             {
                 const veh = player.vehicle
+                if(vehicles.getOwner(veh.id).rent)return user.notify(player, 'Данный транспорт нельзя припарковать', 'error')
 
                 container.set('vehicles', veh.id, 'position', {
                     x: veh.position.x,
@@ -29,6 +30,18 @@ try
 
                 vehicles.save(veh.id)
                 user.notify(player, 'Вы успешно припарковали транспорт здесь', 'warning')
+            }
+        },
+        'unrent': {
+            func: player =>
+            {
+                const veh = container.get('user', player.id, 'rentVehicle')
+                if(!veh)return user.notify(player, 'Вы не арендуете транспорт', 'error')
+
+                vehicles.destroy(veh.vehicle.id)
+                container.set('user', player.id, 'rentVehicle', null)
+
+                user.notify(player, 'Вы успешно отказались от аренды транспорта', 'error')
             }
         }
     })

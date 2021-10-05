@@ -15,9 +15,14 @@ try
                 user: 'root',
                 database: 'sunset'
             })
-            callback()
 
-            logger.log('MySQL connection: OK!')
+            mysql.query('SET GLOBAL wait_timeout=86400', [], err =>
+            {
+                if(err)return logger.error('mysql.connect', e)
+
+                callback()
+                logger.log('MySQL connection: OK!')
+            })
         }
         catch(e)
         {

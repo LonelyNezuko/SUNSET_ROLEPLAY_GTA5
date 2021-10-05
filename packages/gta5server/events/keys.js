@@ -3,11 +3,15 @@ try
 {
     const container = require('../modules/container')
     const func = require('../modules/func')
+    const enums = require('../modules/enums')
 
     const vehicles = require('../property/vehicles')
     const houses = require('../property/houses')
 
     const user = require('../user')
+    const admin = require('../admin')
+
+    const npc = require('../modules/npc')
 
     mp.events.add('client::enterKey', (player, key) =>
     {
@@ -47,6 +51,16 @@ try
             }
             case keyBinds.toggleVehicleBelt.key:
             {
+                if(!player.vehicle)return
+                logger.log('', enums.vehiclesData[vehicles.getModel(player.vehicle.id)].type)
+                if(enums.vehiclesData[vehicles.getModel(player.vehicle.id)].type === 'boat'
+                    || enums.vehiclesData[vehicles.getModel(player.vehicle.id)].type === 'cycles'
+                    || enums.vehiclesData[vehicles.getModel(player.vehicle.id)].type === 'helicopter'
+                    || enums.vehiclesData[vehicles.getModel(player.vehicle.id)].type === 'motorcycles'
+                    || enums.vehiclesData[vehicles.getModel(player.vehicle.id)].type === 'planes'
+                    || enums.vehiclesData[vehicles.getModel(player.vehicle.id)].type === 'trailer'
+                    || enums.vehiclesData[vehicles.getModel(player.vehicle.id)].type === 'trains')return
+
                 player.call('server::vehicles:belt')
                 break
             }
@@ -54,6 +68,14 @@ try
             case keyBinds.action.key:
             {
                 houses.action(player)
+
+                npc.action(player)
+                break
+            }
+
+            case keyBinds.fastAdminMenu.key:
+            {
+                admin.fastAdminMenu(player)
                 break
             }
         }
