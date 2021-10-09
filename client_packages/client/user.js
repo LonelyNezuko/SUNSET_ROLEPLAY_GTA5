@@ -102,7 +102,13 @@ try
                     user.escStatusTimer = null
                 }, 1500)
             }
-            else user.escStatus = false
+            else
+            {
+                user.escStatus = false
+
+                clearTimeout(user.escStatusTimer)
+                user.escStatusTimer = null
+            }
         }
     }
 
@@ -200,6 +206,41 @@ try
                 region: func.getStreetNames()
             }
         }, false)
+    }
+
+    user.marker = null
+    user.markerBlip = null
+    user.markerColshape = null
+    user.markerEnabled = false
+
+    user.setMarker = (x, y, z, dimension = -1, name = '') =>
+    {
+        if(user.marker) user.destroyMarker()
+        if(dimension === -1) dimension = mp.players.local.dimension
+
+        user.marker = mp.markers.new(1, new mp.Vector3(x, y, z), 1,
+        {
+            color: [255, 255, 255, 100],
+            dimension: dimension
+        })
+        user.markerBlip = mp.blips.new(1, new mp.Vector3(x, y, z),
+        {
+            name: name.length ? name : 'Маркер',
+            scale: 1,
+            dimension: dimension
+        })
+
+        user.marker.name = name
+        user.markerEnabled = false
+    }
+    user.destroyMarker = () =>
+    {
+        if(!user.marker)return
+
+        user.marker.destroy()
+        user.markerBlip.destroy()
+
+        user.marker = null
     }
 
     exports = user

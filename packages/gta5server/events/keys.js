@@ -13,13 +13,38 @@ try
 
     const npc = require('../modules/npc')
 
+    const farm = require('../jobs/farm')
+
     mp.events.add('client::enterKey', (player, key) =>
     {
         if(!user.isLogged(player))return
 
         const keyBinds = container.get('user', player.id, 'keyBinds')
+        let clear = false
+
+        for(var elem in keyBinds)
+        {
+            if(keyBinds[elem].key === key
+                && keyBinds[elem].admin && keyBinds[elem].admin < user.getAdmin(player)) clear = true
+        }
+        if(clear)return false
+
         switch(key)
         {
+            case keyBinds.chatOpen.key:
+            {
+                user.addOpened(player, 'chat', player =>
+                {
+                    player.call('server::chat:close')
+                })
+                player.call('server::chat:open', [ user.getAdmin(player) ? true : false ])
+                break
+            }
+            case keyBinds.chatClose.key:
+            {
+                user.removeOpened(player, 'chat')
+                break
+            }
             case keyBinds.toggleVehicleEngine.key:
             {
                 if(!player.vehicle)return
@@ -70,12 +95,25 @@ try
                 houses.action(player)
 
                 npc.action(player)
+
+                farm.action(player)
                 break
             }
 
             case keyBinds.fastAdminMenu.key:
             {
                 admin.fastAdminMenu(player)
+                break
+            }
+
+            case keyBinds.savePosition.key:
+            {
+                func.savePosition([ player.position.x, player.position.y, player.position.z, player.heading ], '', (status, error) =>
+                {
+                    if(!status) user.notify(player, `Save Position Error: ${error}`);
+                    else user.notify(player, `Position saved.`);
+                })
+
                 break
             }
         }

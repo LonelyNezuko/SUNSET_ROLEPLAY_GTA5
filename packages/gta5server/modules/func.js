@@ -1,6 +1,8 @@
 const logger = require('./logger')
 try
 {
+    const fs = require('fs')
+
     const func = {}
 
     func.random = (min, max) =>
@@ -46,6 +48,14 @@ try
         pos.x = pos.x + dist * Math.cos(angle);
 
         return pos;
+    }
+
+    func.savePosition = (position, name = "", callback) =>
+    {
+        fs.appendFile('saved/positions.txt', `${position[0]}, ${position[1]}, ${position[2]}, ${position[3]} // ${name}\r\n`, error => {
+            if(error) callback(false, error)
+            else callback(true)
+        })
     }
 
     module.exports = func

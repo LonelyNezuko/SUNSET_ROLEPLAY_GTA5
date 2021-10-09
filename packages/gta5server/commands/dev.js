@@ -103,10 +103,11 @@ try
             },
             func: (player, name = '') =>
             {
-                fs.appendFile('saved/positions.txt', `${player.position.x}, ${player.position.y}, ${player.position.z}, ${player.heading} // ${name}\r\n`, error => {
-    		        if(error) user.notify(player, `Save Position Error: ${err.message}`);
-    		        else user.notify(player, `Position saved. (${name})`);
-    		    })
+                func.savePosition([ player.position.x, player.position.y, player.position.z, player.heading ], name, (status, error) =>
+                {
+                    if(!status) user.notify(player, `Save Position Error: ${error}`);
+                    else user.notify(player, `Position saved. (${name})`);
+                })
             }
         },
         'saveCamPos': {

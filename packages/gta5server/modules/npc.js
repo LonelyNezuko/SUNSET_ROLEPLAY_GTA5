@@ -10,6 +10,8 @@ try
 
     const vehicles = require('../property/vehicles')
 
+    const farm = require('../jobs/farm')
+
     const npcDialog = require('./npcDialog')
     const npc = {}
 
@@ -124,6 +126,7 @@ try
         const id = npc.nearPlayer(player)
         if(id === -1)return
 
+        if(npc.getHash(id).indexOf('job-farm') !== -1)return farm.actionNPC(player, npc.getHash(id))
         switch(npc.getHash(id))
         {
             case 'rentMoto':

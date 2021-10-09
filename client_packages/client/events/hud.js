@@ -8,47 +8,39 @@ try
 	const chat = require('./client/chat')
 
 	mp.events.add({
-		'ui::hud:openChat': (returns = false) =>
+		'server::chat:open': admin =>
 		{
-			if(!returns) mp.events.callRemote('client::hud:openChat')
-			else
-			{
-				user.cursor(true, false)
-				ui.call('UI::hud', {
-					cmd: 'chatOpen'
-				})
-			}
+			ui.call('UI::chat', {
+				cmd: 'show',
+				data: admin
+			})
+            user.cursor(true, false)
 		},
-        'ui::hud:closeChat': () =>
+        'server::chat:close': () =>
         {
+			ui.call('UI::chat', {
+				cmd: 'hide'
+			})
             user.cursor(false, true)
         },
-        'ui::hud:pushChat': data =>
+        'ui::chat::send': text =>
         {
-            data = JSON.parse(data)
-			logger.debug('ui::hud:pushChat', data)
+			logger.debug('ui::chat::send', text)
 
-            switch(data.chat)
+            if(text[0] === '/'
+                || text[0] === '!')
             {
-                case 'chat':
-                {
-                    if(data.text[0] === '/'
-                        || data.text[0] === '!')
-                    {
-                        const command = data.text.split(' ')[0].replace('!', '').replace('/', '')
+                const command = text.split(' ')[0].replace('!', '').replace('/', '')
 
-                        const args = data.text.trim().split(' ')
-                        args.splice(0, 1)
+                const args = text.trim().split(' ')
+                args.splice(0, 1)
 
-                        let strArgs = ''
-                        args.forEach(item => strArgs += item + ' ')
+                let strArgs = ''
+                args.forEach(item => strArgs += item + ' ')
 
-                        mp.events.callRemote('client::goCommand', command, strArgs.trim())
-                    }
-					else mp.events.callRemote('client::chat:send', data.text)
-                    break
-                }
+                mp.events.callRemote('client::goCommand', command, strArgs.trim())
             }
+			else mp.events.callRemote('client::chat:send', text)
         },
 
 		'server::chat:send': (text, data) =>

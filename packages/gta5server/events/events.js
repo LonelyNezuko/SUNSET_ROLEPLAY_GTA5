@@ -30,6 +30,7 @@ try
         },
         'playerQuit': (player, exitType, reason) =>
         {
+            user.clearJobActive(player)
             user.save(player)
 
             if(container.get('user', player.id, '/veh') !== null) vehicles.destroy(container.get('user', player.id, '/veh'))

@@ -12,6 +12,8 @@ const vehicles = require('../property/vehicles')
 
 mp.events.add('client::goCommand', (player, command, args) =>
 {
+    user.removeOpened(player, 'chat')
+
     command = commands[command]
     if(!command)return user.notify(player, 'Данная команда не найден', 'error')
 

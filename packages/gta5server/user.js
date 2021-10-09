@@ -105,9 +105,11 @@ try
 				container.set('user', player.id, 'chatsettings', chatsettings)
 
 				container.set('user', player.id, 'nears', {})
+				container.set('user', player.id, 'opened', {})
+
 				container.set('user', player.id, 'rentVehicle', null)
 
-				player.call('server::user:updateUIKeys', [ container.get('user', player.id, 'keyBinds') ])
+				container.set('user', player.id, 'jobActive', false)
 
 				mysql.query('select * from users where id = ?', [ container.get('user', player.id, 'userID') ], (err, res) =>
 				{
@@ -138,6 +140,7 @@ try
 						})
 
 						player.call('server::user:setAdminLevel', [ user.getAdmin(player) ])
+						player.call('server::user:updateUIKeys', [ container.get('user', player.id, 'keyBinds') ])
 
 						chat.local(player, `Добро пожаловать на ${enums.projectNameShort} | ${enums.serverName}`, {
 							timestamp: false
@@ -262,6 +265,9 @@ try
 	user.spawn = (player, defaultSpawn = false, saveClothes = true) =>
 	{
 		if(container.get('user', player.id, 'userCreate') === 0)return user.createCharacter(player)
+
+		for(var key in container.get('user', player.id, 'opened')) user.removeOpened(player, key)
+		user.clearJobActive(player)
 
 		user.resetSkin(player)
 		user.resetClothes(player)
@@ -686,6 +692,99 @@ try
 				}
 			}
 		})
+	}
+
+	user.getJobActive = player =>
+	{
+		if(!user.isLogged(player))return false
+		return container.get('user', player.id, 'jobActive')
+	}
+	user.setJobActive = (player, job) =>
+	{
+		if(!user.isLogged(player))return false
+
+		switch(job)
+		{
+			case 'farm':
+			{
+				user.setClothes(player, 'job-farm', false)
+				break
+			}
+			default:
+			{
+				user.setClothes(player, container.get('user', player.id, 'clothes'), false, false)
+				break
+			}
+		}
+		return container.set('user', player.id, 'jobActive', job)
+	}
+	user.clearJobActive = player =>
+	{
+		if(!user.isLogged(player))return false
+		if(!user.getJobActive(player))return false
+
+		if(user.getJobActiveSalary(player) > 0)
+		{
+			user.giveCash(player, user.getJobActiveSalary(player))
+			container.set('user', player.id, 'jobActiveSalary', 0)
+		}
+		return user.setJobActive(player, false)
+	}
+	user.getJobActiveSalary = player =>
+	{
+		if(!user.isLogged(player)
+			|| !user.getJobActive(player))return false
+
+		return parseFloat(container.get('user', player.id, 'jobActiveSalary'))
+	}
+	user.giveJobActiveSalary = (player, cash) =>
+	{
+		if(!user.isLogged(player)
+			|| !user.getJobActive(player))return false
+
+		return container.set('user', player.id, 'jobActiveSalary', parseFloat(container.get('user', player.id, 'jobActiveSalary')) + parseFloat(cash))
+	}
+
+	user.setMarker = (player, [ x, y, z ], dimension = -1, name = '') =>
+	{
+		if(dimension === -1) dimension = player.dimension
+		player.call('server::user:setMarker', [ x, y, z, dimension, name ])
+	}
+	user.destroyMarker = player =>
+	{
+		player.call('server::user:destroyMarker')
+	}
+
+
+	user.addOpened = (player, name, openedFuncClosed = null) =>
+	{
+		if(!user.isLogged(player))return
+
+		const opened = container.get('user', player.id, 'opened')
+		opened[name] = openedFuncClosed
+
+		return container.set('user', player.id, 'opened', opened)
+	}
+	user.removeOpened = (player, name) =>
+	{
+		if(!user.isLogged(player))return
+
+		const opened = container.get('user', player.id, 'opened')
+		if(typeof opened[name] === undefined)return
+
+		if(opened[name] !== null) opened[name](player)
+		delete opened[name]
+
+		return container.set('user', player.id, 'opened', opened)
+	}
+	user.isOpened = (player, name) =>
+	{
+		if(!user.isLogged(player))return false
+
+		const opened = container.get('user', player.id, 'opened')
+		if(typeof opened[name] === undefined)return false
+
+		return true
 	}
 
 	// [

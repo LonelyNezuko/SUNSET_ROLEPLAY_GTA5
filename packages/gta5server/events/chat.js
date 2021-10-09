@@ -13,6 +13,9 @@ try
         'client::chat:send': (player, text) =>
         {
             if(!user.isLogged(player))return
+            user.removeOpened(player, 'chat')
+
+            if(!text.length)return
 
             const formatText = user.getCharName(player) + ` [${player.id}]` + ` говорит: ${text}`
             mp.players.forEach(pl =>

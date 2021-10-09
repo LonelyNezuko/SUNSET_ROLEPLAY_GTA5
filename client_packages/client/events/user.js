@@ -288,6 +288,15 @@ try
 				cmd: 'update',
 				data: resultKeys
 			})
+		},
+
+		'server::user:setMarker': (x, y, z, dimension, name) =>
+		{
+			user.setMarker(x, y, z, dimension, name)
+		},
+		'server::user:destroyMarker': () =>
+		{
+			user.destroyMarker()
 		}
 	})
 }

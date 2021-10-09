@@ -13,9 +13,19 @@ try
 	const ui = require('./client/ui/index')
 	const user = require('./client/user')
 
+	const func = require('./client/modules/func')
+
 	mp.events.add({
 		'render': () =>
 		{
+			if(user.marker
+				&& !user.markerEnabled
+				&& func.distance(mp.players.local.position, user.marker.position) <= 1.5)
+			{
+				user.markerEnabled = true
+				mp.events.callRemote('client::user:enterMarker', user.marker.name)
+			}
+
 			mp.game.vehicle.defaultEngineBehaviour = false
 		    mp.players.local.setConfigFlag(429, true)
 

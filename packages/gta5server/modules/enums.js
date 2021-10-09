@@ -200,6 +200,19 @@ try
                 shoes: 0,
                 tops: 3
             }
+        ],
+
+        'job-farm': [
+            { // Male
+                undershirts: 171,
+                torsos: 2,
+                tops: 15
+            },
+            { // Female
+                undershirts: 208,
+                torsos: 0,
+                tops: 15
+            }
         ]
     }
 
@@ -279,6 +292,26 @@ try
 
             desc: "Быстрое админ-меню",
             admin: 1
+        },
+        savePosition: {
+            name: 'F8',
+            key: 119,
+
+            desc: "Сохранить координаты",
+            admin: 5
+        },
+
+        chatOpen: {
+            name: 'T',
+            key: 84,
+
+            desc: "Открыть чат"
+        },
+        chatClose: {
+            name: 'ESC',
+            key: 27,
+
+            desc: "Закрыть чат"
         }
     }
 
@@ -402,6 +435,10 @@ try
         'process': "Выполняется",
         'can complete': "Можно завершить",
         'completed': "Завершен"
+    }
+
+    enums.jobSalary = {
+        farm: [ 50 ]
     }
 
     module.exports = enums

@@ -93,6 +93,10 @@ try
         'client::user:save': player =>
         {
             user.save(player)
+        },
+        'client::user:enterMarker': (player, name) =>
+        {
+            player.enterMarker(name)
         }
     })
 }
