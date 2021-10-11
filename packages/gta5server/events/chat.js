@@ -16,12 +16,13 @@ try
             user.removeOpened(player, 'chat')
 
             if(!text.length)return
-
-            const formatText = user.getCharName(player) + ` [${player.id}]` + ` говорит: ${text}`
             mp.players.forEach(pl =>
             {
                 if(user.isLogged(pl)
-                    && func.distance2D(player.position, pl.position) < 30) chat.local(pl, formatText)
+                    && func.distance2D(player.position, pl.position) < 30) chat.local(pl, text, -1, {
+                        id: pl.id,
+                        name: user.getCharName(pl)
+                    })
             })
         },
 
@@ -34,33 +35,6 @@ try
         {
             if(!user.isLogged(player))return
             chat.sendDo(player, text)
-        },
-
-        'server::chat:sendMe': (player, text) =>
-        {
-            const formatText = user.getCharName(player) + ` [${player.id}]` + ` ${text}`
-            mp.players.forEach(pl =>
-            {
-                if(user.isLogged(pl)
-                    && func.distance2D(player.position, pl.position) < 30) chat.local(pl, formatText, {
-                        style: {
-                            color: "#db70d3"
-                        }
-                    })
-            })
-        },
-        'server::chat:sendDo': (player, text) =>
-        {
-            const formatText = user.getCharName(player) + ` [${player.id}]` + ` ${text}`
-            mp.players.forEach(pl =>
-            {
-                if(user.isLogged(pl)
-                    && func.distance2D(player.position, pl.position) < 30) chat.local(pl, formatText, {
-                        style: {
-                            color: "#608ebf"
-                        }
-                    })
-            })
         }
     })
 }

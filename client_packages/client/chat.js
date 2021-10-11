@@ -6,12 +6,15 @@ try
 
     chat.send = (text, data = {}) =>
     {
-        ui.call('UI::hud', {
-            cmd: 'chatSend',
-            data: {
-                text: text,
-                data: data
-            }
+        data.text = text
+
+        if(data.color && data.color === -1) data.color = 'FFFFFF'
+        if(data.textColor && data.textColor === -1) data.textColor = 'FFFFFF'
+        if(data.backgroundColor && data.backgroundColor === -1) data.backgroundColor = 'FFFFFF'
+
+        ui.call('UI::chat', {
+            cmd: 'addMessage',
+            data: data
         })
     }
 

@@ -142,14 +142,11 @@ try
 						player.call('server::user:setAdminLevel', [ user.getAdmin(player) ])
 						player.call('server::user:updateUIKeys', [ container.get('user', player.id, 'keyBinds') ])
 
-						chat.local(player, `Добро пожаловать на ${enums.projectNameShort} | ${enums.serverName}`, {
+						chat.local(player, `Добро пожаловать на ${enums.projectNameShort} | ${enums.serverName}`, -1, {
 							timestamp: false
 						})
-						if(user.getAdmin(player)) chat.local(player, `Вы вошли, как администратор ${user.getAdmin(player)} уровня.`, {
-							timestamp: false,
-							style: {
-								color: "#6bc5cf"
-							}
+						if(user.getAdmin(player)) chat.local(player, `Вы вошли, как администратор ${user.getAdmin(player)} уровня.`, '6bc5cf', {
+							timestamp: false
 						})
 
 						player.call('server::npc:createPeds', [ container.all('npc') ])
@@ -648,11 +645,7 @@ try
 			container.set('user', player.id, 'quests', quests)
 			user.save(player)
 
-			chat.local(player, `Вы получили новый квест: ${questName}.`, {
-				style: {
-					color: '#53df9d'
-				}
-			})
+			chat.local(player, `Вы получили новый квест: ${questName}.`, '53df9d')
 		}
 		catch(e)
 		{
