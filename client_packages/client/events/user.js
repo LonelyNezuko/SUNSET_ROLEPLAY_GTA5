@@ -100,9 +100,9 @@ try
 		{
 			user.setCamera(position, atCoord, data)
 		},
-		'server::user:destroyCamera': () =>
+		'server::user:destroyCamera': data =>
 		{
-			user.destroyCamera()
+			user.destroyCamera(data)
 		},
 		'server::user:loadScreen': (toggle, duration) =>
 		{
@@ -118,9 +118,9 @@ try
 		{
 			user.resetSkin(settings, gender)
 		},
-		'server::user:setClothes': clothes =>
+		'server::user:setClothes': (clothes, logger) =>
 		{
-			user.setClothes(clothes)
+			user.setClothes(clothes, logger)
 		},
 
 		'server::user:createCharacter': (userCreate, settings) =>
@@ -141,6 +141,7 @@ try
 				data.genetic.surname = settings.surname
 				data.genetic.birthday = settings.birthday
 				data.genetic.nationality = settings.nationality
+				data.clothes = [ 0, 0, 0 ]
 
 				logger.log('', data)
 
@@ -172,22 +173,31 @@ try
 			user.setClothes(enums.createCharClothes[!gender ? 0 : 1][1][clothes[1]])
 			user.setClothes(enums.createCharClothes[!gender ? 0 : 1][2][clothes[2]])
 		},
-		'ui::user:changeCameraCharacter': data =>
+		'ui::createChar:updateCam': camera =>
 		{
-			data = JSON.parse(data)
-
-			// if(data.camera === 'global')
-			// {
-				// user.camera.setCoord(437.9560241699219, -993.4720825195312, 31.3)
-				// user.camera.pointAtCoord(435.93829345703121, -993.4317993164062, 31.3)
-			// 	user.camera.setFov(30)
-			// }
-			// else if(data.camera === 'face')
-			// {
-			// 	user.camera.setCoord(437.9560241699219, -993.4720825195312, 31.3)
-			// 	user.camera.pointAtCoord(435.93829345703121, -993.4317993164062, 31.3)
-			// 	user.camera.setFov(20)
-			// }
+			switch(camera)
+	        {
+				case 0:
+	            {
+	                user.setCameraToPlayer({
+	                    height: 0.7,
+	                    dist: 1
+	                })
+	                break
+	            }
+	            case 1:
+	            {
+	                user.setCameraToPlayer()
+	                break
+	            }
+	            case 2:
+	            {
+	                user.setCameraToPlayer({
+	                    height: -0.6
+	                })
+	                break
+	            }
+	        }
 		},
 		'ui::createChar:create': data =>
 		{
@@ -249,13 +259,13 @@ try
 				}
 			})
 		},
-		'server::user:fuelSpeedometer': fuel =>
+		'server::user:fuelSpeedometer': (fuel, maxFuel) =>
 		{
 			ui.call('UI::hud', {
 				cmd: 'update',
 				data: {
 					speed: {
-						fuel: parseInt(fuel)
+						fuel: [ parseInt(fuel), parseInt(maxFuel) ]
 					}
 				}
 			})
@@ -297,6 +307,11 @@ try
 		'server::user:destroyMarker': () =>
 		{
 			user.destroyMarker()
+		},
+
+		'server::user:setRaceMarker': (x, y, z, dimension, name) =>
+		{
+			user.setRaceMarker(x, y, z, dimension, name)
 		}
 	})
 }

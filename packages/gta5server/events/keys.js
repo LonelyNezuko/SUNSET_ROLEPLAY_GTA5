@@ -4,6 +4,7 @@ try
     const container = require('../modules/container')
     const func = require('../modules/func')
     const enums = require('../modules/enums')
+    const modal = require('../modules/modal')
 
     const vehicles = require('../property/vehicles')
     const houses = require('../property/houses')
@@ -25,7 +26,7 @@ try
         for(var elem in keyBinds)
         {
             if(keyBinds[elem].key === key
-                && keyBinds[elem].admin && keyBinds[elem].admin < user.getAdmin(player)) clear = true
+                && keyBinds[elem].admin && keyBinds[elem].admin > user.getAdmin(player)) clear = true
         }
         if(clear)return false
 
@@ -40,8 +41,9 @@ try
                 player.call('server::chat:open', [ user.getAdmin(player) ? true : false ])
                 break
             }
-            case keyBinds.chatClose.key:
+            case keyBinds.uiClose.key:
             {
+                modal.toggle(player, false)
                 user.removeOpened(player, 'chat')
                 break
             }

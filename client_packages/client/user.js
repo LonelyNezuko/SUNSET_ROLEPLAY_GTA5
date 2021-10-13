@@ -8,7 +8,10 @@ try
     const func = require('./client/modules/func')
 
     const user = {}
+
     user.adminLevel = 0
+
+    user.showHelper = null
 
     user.toggleHud = toggle =>
     {
@@ -17,9 +20,24 @@ try
         ui.call('UI::hud', {
             cmd: 'update',
             data: {
-                show: toggle
+                show: toggle,
+                helper: user.showHelper
             }
         })
+
+        if(!toggle)
+        {
+            ui.call('UI::chat', {
+                cmd: 'hide'
+            })
+        }
+        else
+        {
+            ui.call('UI::chat', {
+                cmd: 'show',
+                data: !user.adminLevel ? false : true
+            })
+        }
 
         if(!toggle)
         {
@@ -46,16 +64,15 @@ try
 		if(data.render === undefined
             || data.render === true) mp.game.cam.renderScriptCams(true, data.ease ? true : false, data.ease ? data.ease : 0, false, false)
     }
-    user.destroyCamera = (ease = 0, cameraEditDisable = true, renderDisable = true) =>
+    user.destroyCamera = (data = {}) =>
     {
         if(!user.camera)return
-
-        if(renderDisable) mp.game.cam.renderScriptCams(false, ease > 0 ? true : false, ease, false, false)
+        if(!data.renderDisable || data.renderDisable === false) mp.game.cam.renderScriptCams(false, data.ease ? true : false, data.ease ? data.ease : 0, false, false)
 
         user.camera.destroy()
         user.camera = null
 
-        if(cameraEditDisable)
+        if(data.cameraEditDisable)
         {
             user.cameraEdit = false
             ui.call('UI', {
@@ -64,20 +81,20 @@ try
             })
         }
     }
-    user.setCameraToPlayer = (edit = false, ease = undefined) =>
+    user.setCameraToPlayer = (data = {}) =>
     {
         const playerPosition = mp.players.local.position
-        const cameraPosition = func.getCameraOffset(new mp.Vector3(playerPosition.x, playerPosition.y, playerPosition.z + 0.5), mp.players.local.getHeading() + 90, 1.5)
+        const cameraPosition = func.getCameraOffset(new mp.Vector3(playerPosition.x, playerPosition.y, playerPosition.z + (data.height || 0.5)), mp.players.local.getHeading() + (data.angle || 90), data.dist || 1.5)
 
-        user.setCamera(cameraPosition, [ playerPosition.x, playerPosition.y, playerPosition.z + 0.5], {
-            ease: ease
+        user.setCamera([ cameraPosition.x, cameraPosition.y, cameraPosition.z ], [ playerPosition.x, playerPosition.y, playerPosition.z + (data.height || 0.5)], {
+            ease: data.ease
         })
-        user.cameraEdit = edit
+        // user.cameraEdit = edit
 
-        ui.call('UI', {
-            cmd: "cameraEdit",
-            data: edit
-        })
+        // ui.call('UI', {
+        //     cmd: "cameraEdit",
+        //     data: edit
+        // })
     }
 
     user.cursorStatus = false
@@ -138,7 +155,6 @@ try
         if(!gender) mp.players.local.model = mp.game.joaat('mp_m_freemode_01')
         else mp.players.local.model = mp.game.joaat('mp_f_freemode_01')
 
-        logger.log('user.resetSkin', settings)
 		mp.players.local.setHeadBlendData(
 			settings.genetic.mother,
 			settings.genetic.father,
@@ -173,9 +189,11 @@ try
 
         for(var i = 0; i < 20; i ++) mp.players.local.setFaceFeature(i, settings.face[i])
     }
-    user.setClothes = clothes =>
+    user.setClothes = (clothes, logger) =>
     {
-        logger.log('user.setClothes', clothes)
+        if(typeof clothes !== 'object')return
+
+        if(logger) logger.log('user.setClothes', clothes)
         for(var key in clothes) mp.players.local.setComponentVariation(enums.clothesComponentID[key], clothes[key], 0, 0)
     }
 
@@ -190,9 +208,10 @@ try
         ui.call('UI::hud', {
             cmd: 'update',
             data: {
-                helper: !toggle ? null : 'Нажмите ${' + keyName + '} ' + desc
+                helper: !toggle ? null : `Нажмите ~${keyName}~ ${desc}`
             }
         })
+        user.showHelper = !toggle ? null : `Нажмите ~${keyName}~ ${desc}`
     }
 
 
@@ -241,6 +260,32 @@ try
         user.markerBlip.destroy()
 
         user.marker = null
+    }
+    user.setRaceMarker = (x, y, z, dimension = -1, name = '') =>
+    {
+        if(user.marker) user.destroyMarker()
+        if(dimension === -1) dimension = mp.players.local.dimension
+
+        user.marker = mp.markers.new(2, new mp.Vector3(x, y, z), 1,
+        {
+            color: [255, 255, 255, 100],
+            dimension: dimension,
+            scale: 5.0
+        })
+        user.markerBlip = mp.blips.new(1, new mp.Vector3(x, y, z),
+        {
+            name: name.length ? name : 'Маркер',
+            scale: 1,
+            dimension: dimension
+        })
+
+        user.marker.name = name
+        user.markerEnabled = false
+    }
+
+    user.setPos = (x, y, z, a = -1, vw = -1) =>
+    {
+        mp.events.callRemote('client::user:setPos', x, y, z, a, vw)
     }
 
     exports = user

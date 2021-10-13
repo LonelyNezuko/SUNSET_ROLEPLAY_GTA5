@@ -11,8 +11,6 @@ try
 
 	const chat = require('./chat')
 
-	const vehicles = require('./property/vehicles')
-
 	const user = {}
 
 	user.notify = (player, text, type = 'success') =>
@@ -24,9 +22,9 @@ try
 	{
 		player.call('server::user:setCamera', [ position, atCoord, data ])
 	}
-	user.destroyCamera = player =>
+	user.destroyCamera = (player, data = {}) =>
 	{
-		player.call('server::user:destroyCamera')
+		player.call('server::user:destroyCamera', data)
 	}
 
 	user.kick = (player, reason) =>
@@ -68,7 +66,6 @@ try
 
 	user.load = (player, character) =>
 	{
-		logger.log('user.load', character)
 		container.delete('user', player.id)
 		container.set('user', player.id, 'isLogged', false)
 
@@ -83,6 +80,7 @@ try
 				{
 					container.set('user', player.id, item, func.isJSON(res[0][item]) ? JSON.parse(res[0][item]) : res[0][item])
 				})
+				if(JSON.stringify(container.get('user', player.id, 'clothes')) === '{}') container.set('user', player.id, 'clothes', enums.clothes.none[container.get('user', player.id, 'gender')])
 
 				container.set('user', player.id, 'id', res[0]['id'])
 				container.set('user', player.id, 'userID', res[0]['userID'])
@@ -153,7 +151,7 @@ try
 
 						setTimeout(() =>
 						{
-							user.spawn(player, false, false)
+							user.spawn(player)
 							user.addQuest(player, 'Первый тестовый квест', 'Тест', 'Это тестовый квест для тестов', [
 								{
 									name: 'Поговорить с Эдвардом',
@@ -198,14 +196,6 @@ try
 
 		let query = 'update characters set '
 		const args = []
-
-		container.set('user', player.id, 'position', {
-			x: player.position.x,
-			y: player.position.y,
-			z: player.position.z,
-			a: player.heading,
-			vw: player.dimension
-		})
 
 		// Сохранение персонажа
 		enums.characterVariables.forEach((item, i) =>
@@ -259,7 +249,7 @@ try
 		})
 	}
 
-	user.spawn = (player, defaultSpawn = false, saveClothes = true) =>
+	user.spawn = (player, defaultSpawn = false) =>
 	{
 		if(container.get('user', player.id, 'userCreate') === 0)return user.createCharacter(player)
 
@@ -269,7 +259,7 @@ try
 		user.resetSkin(player)
 		user.resetClothes(player)
 
-		user.setClothes(player, container.get('user', player.id, 'clothes'), saveClothes, false)
+		user.setClothes(player, container.get('user', player.id, 'clothes'), false, false)
 
 		if(container.get('user', player.id, 'position').x !== 0
 			&& container.get('user', player.id, 'position').y !== 0
@@ -281,14 +271,17 @@ try
 			user.setPos(player, spawn[0], spawn[1], spawn[2], spawn[3], spawn[4])
 		}
 
-		setTimeout(() => user.save(player), 3000)
+		setTimeout(() =>
+		{
+			user.savePosition(player)
+		}, 1500)
 	}
 
 	user.createCharacter = (player) =>
 	{
 		if(container.get('user', player.id, 'userCreate') !== 0)return user.spawn(player)
+		if(container.get('user', player.id, 'userCreate') !== 0) user.savePosition(player)
 
-		if(container.get('user', player.id, 'userCreate') !== 0) user.savePos(player)
 		user.setPos(player, 436.1955261230469, -993.43701171875, 30.689594268798828, -93.25418853759766, player.id + 1)
 
 		user.resetSkin(player)
@@ -314,21 +307,21 @@ try
 	user.resetSkin = (player, gender = -1, data = null) =>
 	{
 		if(!user.isLogged(player))return
-		// { "pedigree": "one": 0, "two": 0, "looks": 0.5, "skin": 0.5 }, "hair": "color": 0, "head": 0, "eyebrow": 0, "beard": 0, "breast": 0 }, "face": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "appearance": [0, 0, 0, 0, 0, 0, 0, 0, 0] }
+		// { "genetic": "one": 0, "two": 0, "looks": 0.5, "skin": 0.5 }, "hair": "color": 0, "head": 0, "eyebrow": 0, "beard": 0, "breast": 0 }, "face": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "appearance": [0, 0, 0, 0, 0, 0, 0, 0, 0] }
 
 		let settings = container.get('user', player.id, 'skin')
 		if(data) settings = data
 
-		if(gender === -1) gender = container.get('user', player.id, 'gender')
+		if(gender === -1) gender = user.getGender(player)
 		player.call('server::user:resetskin', [ settings, gender ])
 	}
-	user.resetClothes = (player, save = false) =>
+	user.resetClothes = (player) =>
 	{
 		if(!user.isLogged(player))return
 
-		user.setClothes(player, 'none', save)
+		player.call('server::user:setClothes', [ user.getEnumsClothes(player, 'none'), false ])
 	}
-	user.setClothes = (player, clothes = 'none', save = true, isName = true) =>
+	user.setClothes = (player, clothes = 'none', save = false, isName = true) =>
 	{
 		if(!user.isLogged(player))return
 
@@ -447,7 +440,7 @@ try
 	user.getEnumsClothes = (player, clothes) =>
     {
         if(!user.isLogged(player))return {}
-        return enums.clothes[clothes][container.get('user', player.id, 'gender')]
+        return enums.clothes[clothes][user.getGender(player)]
     }
 
 	user.getCharName = player =>
@@ -530,7 +523,7 @@ try
 
 	user.getID = player =>
 	{
-		if(!user.isLogged(player))return {}
+		if(!user.isLogged(player))return -1
 		return container.get('user', player.id, 'id')
 	}
 
@@ -598,7 +591,7 @@ try
 					// user.setGPS(player, quest.owner.position.x, quest.owner.position.y, quest.owner.position.z)
 				}
 			}
-			else user.notify(player, `Задание по квесту ${quest.name} ${quest.tasks[taskID].name} было выполнено.<br>Осталось заданий: ${quest.tasks.length - taskCompleted}`, 'warning')
+			else user.notify(player, `Задание по квесту ${quest.name} ${quest.tasks[taskID].name} было выполнено. Осталось заданий: ${quest.tasks.length - taskCompleted}`, 'warning')
 		}
 
 		user.saveQuest(player, questName, quest)
@@ -679,7 +672,7 @@ try
 				if(rentVehicle.timer <= 0)
 				{
 					user.notify(player, 'Аренда Вашего транспорт окончена', 'warning')
-					vehicles.destroy(rentVehicle.vehicle.id)
+					mp.events.call('vehicles:destroy', player, rentVehicle.vehicle.id)
 
 					container.set('user', player.id, 'rentVehicle', null)
 				}
@@ -705,10 +698,13 @@ try
 			}
 			default:
 			{
+				user.destroyMarker(player)
 				user.setClothes(player, container.get('user', player.id, 'clothes'), false, false)
 				break
 			}
 		}
+
+		container.set('user', player.id, 'jobActiveSalary', 0)
 		return container.set('user', player.id, 'jobActive', job)
 	}
 	user.clearJobActive = player =>
@@ -747,6 +743,11 @@ try
 	{
 		player.call('server::user:destroyMarker')
 	}
+	user.setRaceMarker = (player, [ x, y, z ], dimension = -1, name = '') =>
+	{
+		if(dimension === -1) dimension = player.dimension
+		player.call('server::user:setRaceMarker', [ x, y, z, dimension, name ])
+	}
 
 
 	user.addOpened = (player, name, openedFuncClosed = null) =>
@@ -763,7 +764,7 @@ try
 		if(!user.isLogged(player))return
 
 		const opened = container.get('user', player.id, 'opened')
-		if(typeof opened[name] === undefined)return
+		if(opened[name] === undefined)return
 
 		if(opened[name] !== null) opened[name](player)
 		delete opened[name]
@@ -778,6 +779,24 @@ try
 		if(typeof opened[name] === undefined)return false
 
 		return true
+	}
+
+	user.getGender = player =>
+	{
+		if(!user.isLogged(player))return 0
+		return container.get('user', player.id, 'gender')
+	}
+
+	user.savePosition = player =>
+	{
+		if(!user.isLogged(player))return
+		return container.set('user', player.id, 'position', {
+			x: player.position.x,
+			y: player.position.y,
+			z: player.position.z,
+			a: player.heading,
+			vw: player.dimension
+		})
 	}
 
 	// [

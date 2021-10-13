@@ -11,23 +11,22 @@ try
 		'server::chat:open': admin =>
 		{
 			ui.call('UI::chat', {
-				cmd: 'show',
-				data: admin
+				cmd: 'showInput',
+				data: true
 			})
             user.cursor(true, false)
 		},
         'server::chat:close': () =>
         {
 			ui.call('UI::chat', {
-				cmd: 'hide'
+				cmd: 'showInput',
+				data: false
 			})
             user.cursor(false, true)
         },
         'ui::chat::send': text =>
         {
-			logger.debug('ui::chat::send', text)
-
-            if(text[0] === '/'
+			if(text[0] === '/'
                 || text[0] === '!')
             {
                 const command = text.split(' ')[0].replace('!', '').replace('/', '')

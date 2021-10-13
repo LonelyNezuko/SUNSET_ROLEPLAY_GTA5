@@ -144,6 +144,7 @@ try
 
     vehicles.createRent = (player, model, position) =>
     {
+        logger.log('', player, user.getID(player))
         const veh = vehicles.create(model, [ position[0], position[1], position[2] ], {
             number: "RENT",
             heading: position[3],
@@ -157,6 +158,8 @@ try
             vehicle: veh,
             timer: 3600
         })
+
+        if(veh) setTimeout(() => player.putIntoVehicle(veh, 0), 500)
         return veh
     }
 
@@ -308,7 +311,7 @@ try
             if(pl.vehicle === veh
                 && pl.seat === 0)
             {
-                pl.call('server::user:fuelSpeedometer', [ container.get('vehicles', vehid, 'fuel') ])
+                pl.call('server::user:fuelSpeedometer', [ container.get('vehicles', vehid, 'fuel'), enums.vehiclesData[vehicles.getModel(pl.vehicle.id)].maxFuel ])
                 if(error) user.notify(pl, 'В данном транспорте закончилось топливо. Вызовите механика для заправки', 'error')
             }
         })

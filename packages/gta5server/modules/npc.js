@@ -77,6 +77,12 @@ try
         if(!npc.isState(id))return 'None'
         return container.get('npc', id, 'name')
     }
+    npc.getDesc = id =>
+    {
+        if(!npc.isState(id))return 'None'
+        return container.get('npc', id, 'desc')
+    }
+
     npc.getHash = id =>
     {
         if(!npc.isState(id))return '-'
@@ -126,115 +132,116 @@ try
         const id = npc.nearPlayer(player)
         if(id === -1)return
 
-        if(npc.getHash(id).indexOf('job-farm') !== -1)return farm.actionNPC(player, npc.getHash(id))
-        switch(npc.getHash(id))
+        if(npc.getHash(id).indexOf('job-farm') !== -1) farm.actionNPC(player, npc.getHash(id))
+        else
         {
-            case 'rentMoto':
+            switch(npc.getHash(id))
             {
-                npcDialog.toggle(player, true)
-
-                npcDialog.setText(player, 'Хочешь арендовать мопед?', [
-                    { id: 'yes', text: `Да ( ~g~50$ ~w~)` },
-                    { id: 'no', text: 'Нет, передумал' }
-                ])
-
-                player.npcDialogTrigger = button =>
+                case 'rentMoto':
                 {
-                    if(button === 'yes')
+                    npcDialog.toggle(player, true)
+                    npcDialog.setText(player, 'Хочешь арендовать мопед?', [
+                        { id: 'yes', title: `Да ( 50$ )` },
+                        { id: 'no', title: 'Нет, передумал', isExit: true }
+                    ])
+
+                    player.npcDialogTrigger = button =>
                     {
-                        if(user.getCash(player) < enums.rentPrices.moto)
+                        if(button === 'yes')
                         {
-                            npcDialog.setText(player, 'Похоже, что у тебя не хватает денег')
-                            return npcDialog.toggle(player, false, 2500)
-                        }
-
-                        if(npc.getPosition(id).x === -80.0335693359375
-                            || npc.getPosition(id).y === 6341.1884765625)
-                        {
-                            npcDialog.toggle(player, false)
-                            if(container.get('user', player.id, 'rentVehicle'))return user.notify(player, 'Вы уже арендуете транспорт', 'error')
-
-                            const position = [
-                                [ -76.63664245605469, 6346.73388671875, 31.490365982055664, 42.84047317504883 ],
-                                [ -79.74605560302734, 6344.404296875, 31.490365982055664, 40.80647277832031 ],
-                                [ -82.7188720703125, 6341.7353515625, 31.490365982055664, 40.37101745605469 ],
-                                [ -85.27088928222656, 6339.06298828125, 31.490365982055664, 42.70869064331055 ]
-                            ]
-                            const randomPosition = func.random(0, position.length - 1)
-
-                            const veh = vehicles.createRent(player, 'faggio', position[randomPosition])
-                            if(!veh)return user.notify(player, 'Не удалось создать транспорт', 'error')
-
-                            user.giveCash(player, -enums.rentPrices.moto)
-                            setTimeout(() => player.putIntoVehicle(veh, 0), 500)
-
-                            user.notify(player, 'Вы успешно арендовали транспорт. Срок действия аренды Час.')
-                            user.updateQuest(player, 'Первый тестовый квест', 1, 1)
-                        }
-                        else
-                        {
-                            npcDialog.setText(player, 'Упс, похоже, что я не арендодатель мопедов...')
-                            return npcDialog.toggle(player, false, 3000)
-                        }
-                    }
-                    else npcDialog.toggle(player, false)
-                }
-                break
-            }
-            case 'test':
-            {
-                npcDialog.toggle(player, true)
-                npcDialog.setText(player, 'Привет, ты хочешь поболтать?', [
-                    { id: 'yes', text: 'Да, хочу' },
-                    { id: 'no', text: 'Нет, я пожалуй пойду' }
-                ])
-
-                player.npcDialogTrigger = button =>
-                {
-                    if(button === 'yes')
-                    {
-                        npcDialog.setText(player, 'Какое твое любимое занятие?', [
-                            { id: '1', text: 'Я люблю заниматься Йогой' },
-                            { id: '2', text: 'Я люблю заниматься Бегом' },
-                            { id: '3', text: 'Я люблю заниматься Плаваньем' },
-                            { id: '4', text: 'Я люблю ездить на машине' },
-                            { id: '5', text: 'Я люблю летать с парашутом' },
-                            { id: 'no', text: 'Я наверно все таки пойду' }
-                        ])
-
-                        player.npcDialogTrigger = button =>
-                        {
-                            if(button === 'no')
+                            if(user.getCash(player) < enums.rentPrices.moto)
                             {
-                                npcDialog.setText(player, 'Ладно, удачи тебе')
-                                npcDialog.toggle(player, false, 1000)
+                                npcDialog.setText(player, 'Похоже, что у тебя не хватает денег')
+                                return npcDialog.toggle(player, false, 2500)
+                            }
+
+                            if(npc.getPosition(id).x === -80.0335693359375
+                                || npc.getPosition(id).y === 6341.1884765625)
+                            {
+                                npcDialog.toggle(player, false)
+                                if(container.get('user', player.id, 'rentVehicle'))return user.notify(player, 'Вы уже арендуете транспорт', 'error')
+
+                                const position = [
+                                    [ -76.63664245605469, 6346.73388671875, 31.490365982055664, 42.84047317504883 ],
+                                    [ -79.74605560302734, 6344.404296875, 31.490365982055664, 40.80647277832031 ],
+                                    [ -82.7188720703125, 6341.7353515625, 31.490365982055664, 40.37101745605469 ],
+                                    [ -85.27088928222656, 6339.06298828125, 31.490365982055664, 42.70869064331055 ]
+                                ]
+                                const randomPosition = func.random(0, position.length - 1)
+
+                                const veh = vehicles.createRent(player, 'faggio', position[randomPosition])
+                                if(!veh)return user.notify(player, 'Не удалось создать транспорт', 'error')
+
+                                user.giveCash(player, -enums.rentPrices.moto)
+
+                                user.notify(player, 'Вы успешно арендовали транспорт. Срок действия аренды Час.')
+                                user.updateQuest(player, 'Первый тестовый квест', 1, 1)
                             }
                             else
                             {
-                                npcDialog.setText(player, 'Хорошо занятие. Ладно, я уже пойду по делам, спасибо за твою аудиенцию')
-                                npcDialog.toggle(player, false, 5000)
-
-                                setTimeout(() => user.updateQuest(player, 'Первый тестовый квест', 0, 1), 5000)
+                                npcDialog.setText(player, 'Упс, похоже, что я не арендодатель мопедов...')
+                                return npcDialog.toggle(player, false, 3000)
                             }
                         }
+                        else npcDialog.toggle(player, false)
                     }
-                    else
-                    {
-                        npcDialog.setText(player, 'Ладно, как знаешь.')
-                        npcDialog.toggle(player, false, 1000)
-                    }
+                    break
                 }
+                case 'test':
+                {
+                    npcDialog.toggle(player, true)
+                    npcDialog.setText(player, 'Привет, ты хочешь поболтать?', [
+                        { id: 'yes', title: 'Да, хочу' },
+                        { id: 'no', title: 'Нет, я пожалуй пойду', isExit: true }
+                    ])
 
-                break
-            }
-            default:
-            {
-                return false
+                    player.npcDialogTrigger = button =>
+                    {
+                        if(button === 'yes')
+                        {
+                            npcDialog.setText(player, 'Какое твое любимое занятие?', [
+                                { id: '1', title: 'Я люблю заниматься Йогой' },
+                                { id: '2', title: 'Я люблю заниматься Бегом' },
+                                { id: '3', title: 'Я люблю заниматься Плаваньем' },
+                                { id: '4', title: 'Я люблю ездить на машине' },
+                                { id: '5', title: 'Я люблю летать с парашутом' },
+                                { id: 'no', title: 'Я наверно все таки пойду', isExit: true }
+                            ])
+
+                            player.npcDialogTrigger = button =>
+                            {
+                                if(button === 'no')
+                                {
+                                    npcDialog.setText(player, 'Ладно, удачи тебе')
+                                    npcDialog.toggle(player, false, 1000)
+                                }
+                                else
+                                {
+                                    npcDialog.setText(player, 'Хорошо занятие. Ладно, я уже пойду по делам, спасибо за твою аудиенцию')
+                                    npcDialog.toggle(player, false, 5000)
+
+                                    setTimeout(() => user.updateQuest(player, 'Первый тестовый квест', 0, 1), 5000)
+                                }
+                            }
+                        }
+                        else
+                        {
+                            npcDialog.setText(player, 'Ладно, как знаешь.')
+                            npcDialog.toggle(player, false, 1000)
+                        }
+                    }
+
+                    break
+                }
+                default:
+                {
+                    return false
+                }
             }
         }
 
         npc.setCamera(player, id)
-        npcDialog.setHeader(player, npc.getName(id))
+        npcDialog.setHeader(player, !npc.getDesc(id).length ? npc.getName(id) : [ npc.getName(id), npc.getDesc(id) ])
     }
 
     module.exports = npc

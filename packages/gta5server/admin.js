@@ -3,7 +3,7 @@ try
 {
     const user = require('./user')
 
-    const menuList = require('./modules/menuList')
+    const modal = require('./modules/modal')
     const enums = require('./modules/enums')
     const container = require('./modules/container')
     const func = require('./modules/func')
@@ -18,8 +18,8 @@ try
     {
         if(user.getAdmin(player) < 5)return
 
-        menuList.reset(player)
-        menuList.header(player, 'Админка', 'Создание транспорта')
+        modal.reset(player)
+        modal.header(player, 'Админка', 'Создание транспорта')
 
         let
             defaultVehicle = null,
@@ -35,63 +35,55 @@ try
         }
         if(!defaultVehicle)return user.notify(player, 'Не удалось открыт меню создания транспорта', 'error')
 
-        menuList.append(player, 'inputs', 'model', 'Модель транспорта', defaultVehicleModel)
+        modal.append(player, 'input', 'model', 'Модель транспорта', defaultVehicleModel)
 
-        menuList.append(player, 'choice', 'type', 'Владелец транспорта', 'Игрок', {
+        modal.append(player, 'select', 'type', 'Владелец транспорта', 'Игрок', {
             list: [ 'Игрок' ]
         })
-        menuList.append(player, 'inputs', 'typeID', 'ID владельца', user.getID(player))
+        modal.append(player, 'input', 'typeID', 'ID владельца', user.getID(player))
 
-        menuList.append(player, 'inputs', 'color1', 'Первый цвет (RGB)', '255, 255, 255')
-        menuList.append(player, 'inputs', 'color2', 'Второй цвет (RGB)', '255, 255, 255')
+        modal.append(player, 'input', 'color1', 'Первый цвет (RGB)', '255, 255, 255')
+        modal.append(player, 'input', 'color2', 'Второй цвет (RGB)', '255, 255, 255')
 
-        menuList.append(player, 'empty')
+        // modal.append(player, 'empty')
 
-        menuList.append(player, 'normal', 'create', '~g~Создать транспорт')
-        menuList.append(player, 'normal', '_exit', '~r~Закрыть')
+        modal.append(player, 'button', 'create', '~5eb05c~Создать транспорт')
+        modal.append(player, 'button', '_exit', '~b05c5c~Закрыть')
 
-        menuList.toggle(player, true)
-        player.menuListTrigger = (id, value, elems) =>
+        modal.toggle(player, true)
+        player.modalTrigger = (id, value, elems) =>
         {
             if(id === 'create')
             {
-                try
-                {
-                    const ownerTypes = {
-                        'Игрок': 'player'
-                    }
-
-                    const owner = {}
-                    owner[ownerTypes[elems.type]] = parseInt(elems.typeID)
-
-                    const color = []
-                    color.push([
-                        parseInt(elems.color1.split(',')[0]),
-                        parseInt(elems.color1.split(',')[1]),
-                        parseInt(elems.color1.split(',')[2])
-                    ])
-                    color.push([
-                        parseInt(elems.color2.split(',')[0]),
-                        parseInt(elems.color2.split(',')[1]),
-                        parseInt(elems.color2.split(',')[2])
-                    ])
-
-                    const veh = vehicles.create(elems.model, [ player.position.x, player.position.y, player.position.z ], {
-                        heading: player.heading,
-                        owner: owner,
-                        save: true,
-                        color: color
-                    })
-                    if(!veh)return user.notify(player, 'Не удалось создать транспорт', 'error')
-
-                    user.notify(player, 'Транспорт был успешно создан', 'warning')
-                    menuList.toggle(player, false)
+                const ownerTypes = {
+                    'Игрок': 'player'
                 }
-                catch(e)
-                {
-                    logger.error('', e)
-                    user.notify(player, 'Что-то пошло не так. Проверьте еще раз все данные', 'error')
-                }
+
+                const owner = {}
+                owner[ownerTypes[elems.type]] = parseInt(elems.typeID)
+
+                const color = []
+                color.push([
+                    parseInt(elems.color1.split(',')[0]),
+                    parseInt(elems.color1.split(',')[1]),
+                    parseInt(elems.color1.split(',')[2])
+                ])
+                color.push([
+                    parseInt(elems.color2.split(',')[0]),
+                    parseInt(elems.color2.split(',')[1]),
+                    parseInt(elems.color2.split(',')[2])
+                ])
+
+                const veh = vehicles.create(elems.model, [ player.position.x, player.position.y, player.position.z ], {
+                    heading: player.heading,
+                    owner: owner,
+                    save: true,
+                    color: color
+                })
+                if(!veh)return user.notify(player, 'Не удалось создать транспорт', 'error')
+
+                user.notify(player, 'Транспорт был успешно создан', 'warning')
+                modal.toggle(player, false)
             }
         }
     }
@@ -99,26 +91,26 @@ try
     {
         if(user.getAdmin(player) < 5)return
 
-        menuList.reset(player)
-        menuList.header(player, 'Админка', 'Создание дома')
+        modal.reset(player)
+        modal.header(player, 'Админка', 'Создание дома')
 
-        menuList.append(player, 'choice', 'type', 'Тип имущества', enums.housesType[0], {
+        modal.append(player, 'select', 'type', 'Тип имущества', enums.housesType[0], {
             list: enums.housesType
         })
-        menuList.append(player, 'choice', 'classes', 'Класс имущества', enums.housesClass[0], {
+        modal.append(player, 'select', 'classes', 'Класс имущества', enums.housesClass[0], {
             list: enums.housesClass
         })
-        menuList.append(player, 'inputs', 'price', 'Стоимость', '0', {
+        modal.append(player, 'input', 'price', 'Стоимость', '0', {
             desc: "Устанавливается по желанию"
         })
 
-        menuList.append(player, 'empty')
+        modal.append(player, 'empty')
 
-        menuList.append(player, 'normal', 'create', '~g~Создать дом')
-        menuList.append(player, 'normal', '_exit', '~r~Закрыть')
+        modal.append(player, 'button', 'create', '~5eb05c~Создать дом')
+        modal.append(player, 'button', '_exit', '~b05c5c~Закрыть')
 
-        menuList.toggle(player, true)
-        player.menuListTrigger = (id, value, elems) =>
+        modal.toggle(player, true)
+        player.modalTrigger = (id, value, elems) =>
         {
             if(id === 'create')
             {
@@ -131,7 +123,7 @@ try
                 {
                     if(status === false)return user.notify(player, 'Не удалось создать дом', 'error')
 
-                    menuList.toggle(player, false)
+                    modal.toggle(player, false)
                     user.notify(player, `Вы успешно создали дом #${status}`, 'warning')
                 })
             }
@@ -142,23 +134,23 @@ try
         if(user.getAdmin(player) < 5
             || !enums.bizType.length)return
 
-        menuList.reset(player)
-        menuList.header(player, 'Админка', 'Создание бизнеса')
+        modal.reset(player)
+        modal.header(player, 'Админка', 'Создание бизнеса')
 
-        menuList.append(player, 'choice', 'type', 'Тип бизнеса', enums.bizType[0], {
+        modal.append(player, 'select', 'type', 'Тип бизнеса', enums.bizType[0], {
             list: enums.bizType
         })
-        menuList.append(player, 'inputs', 'price', 'Стоимость', '0', {
+        modal.append(player, 'input', 'price', 'Стоимость', '0', {
             desc: "Устанавливается по желанию"
         })
 
-        menuList.append(player, 'empty')
+        // modal.append(player, 'empty')
 
-        menuList.append(player, 'normal', 'create', '~g~Создать бизнес')
-        menuList.append(player, 'normal', '_exit', '~r~Закрыть')
+        modal.append(player, 'buttton', 'create', '~5eb05c~Создать бизнес')
+        modal.append(player, 'buttton', '_exit', '~b05c5c~Закрыть')
 
-        menuList.toggle(player, true)
-        player.menuListTrigger = (id, value, elems) =>
+        modal.toggle(player, true)
+        player.modalTrigger = (id, value, elems) =>
         {
             if(id === 'create')
             {
@@ -171,7 +163,7 @@ try
                 {
                     if(status === false)return user.notify(player, 'Не удалось создать бизнес', 'error')
 
-                    menuList.toggle(player, false)
+                    modal.toggle(player, false)
                     user.notify(player, `Вы успешно создали бизнес #${status}`, 'warning')
                 })
             }
@@ -184,43 +176,43 @@ try
         if(!user.getAdmin(player))return
         if(userid === -1) userid = player.id
 
-        menuList.reset(player)
-        menuList.header(player, 'Админка', 'Быстрое меню')
+        modal.reset(player)
+        modal.header(player, 'Админка', 'Быстрое меню')
 
-        menuList.append(player, 'inputs', 'playerMenu', 'Управление игроком', userid)
+        modal.append(player, 'input', 'playerMenu', 'Управление игроком', userid)
 
         if(user.getAdmin(player) >= 5)
         {
-            menuList.append(player, 'empty')
+            // modal.append(player, 'empty')
 
-            menuList.append(player, 'normal', 'houseMenu', '~g~Менеджер домов')
-            menuList.append(player, 'normal', 'bizMenu', '~g~Менеджер бизнесов')
-            menuList.append(player, 'normal', 'vehicleMenu', '~g~Менеджер транспорта')
+            modal.append(player, 'button', 'houseMenu', '~caad40~Менеджер домов')
+            modal.append(player, 'button', 'bizMenu', '~caad40~Менеджер бизнесов')
+            modal.append(player, 'button', 'vehicleMenu', '~caad40~Менеджер транспорта')
         }
 
-        menuList.append(player, 'empty')
-        menuList.append(player, 'normal', '_exit', '~r~Закрыть')
+        // modal.append(player, 'empty')
+        modal.append(player, 'button', '_exit', '~b05c5c~Закрыть')
 
-        menuList.toggle(player, true)
-        player.menuListTrigger = (id, value) =>
+        modal.toggle(player, true)
+        player.modalTrigger = (id, value) =>
         {
             if(id === 'playerMenu') user.notify(player, 'В разработке', 'warning')
             else if(id === 'houseMenu'
                 && user.getAdmin(player) >= 5)
             {
-                menuList.reset(player)
-                menuList.header(player, 'Админка', 'Менеджер домов')
+                modal.reset(player)
+                modal.header(player, 'Админка', 'Менеджер домов')
 
-                menuList.append(player, 'normal', 'create', '~g~Создать дом/квартиру')
-                menuList.append(player, 'inputs', 'selectHouseForID', 'Выбрать дом/квартиру по ID')
+                modal.append(player, 'button', 'create', '~g~Создать дом/квартиру')
+                modal.append(player, 'input', 'selectHouseForID', 'Выбрать дом/квартиру по ID')
 
-                menuList.append(player, 'normal', 'back', '~r~<< Назад')
-                menuList.append(player, 'empty')
+                modal.append(player, 'button', 'back', '~r~<< Назад')
+                // modal.append(player, 'empty')
 
                 const all = container.all('houses')
                 for(var key in all)
                 {
-                    menuList.append(player, 'normal', `selectHouse-${all[key].id}`, `${enums.housesType[all[key].type]} ${enums.housesClass[all[key].class]} #${all[key].id}`, '')
+                    modal.append(player, 'button', `selectHouse-${all[key].id}`, `${enums.housesType[all[key].type]} ${enums.housesClass[all[key].class]} #${all[key].id}`, '')
 
                     // , {
                     //     desc: `
@@ -230,8 +222,8 @@ try
                     // }
                 }
 
-                menuList.toggle(player, true)
-                player.menuListTrigger = (id, value) =>
+                modal.toggle(player, true)
+                player.modalTrigger = (id, value) =>
                 {
                     if(id === 'create') admin.showCreateHouseMenu(player)
                     else if(id === 'back') admin.fastAdminMenu(player, userid)
@@ -253,19 +245,19 @@ try
             else if(id === 'bizMenu'
                 && user.getAdmin(player) >= 5)
             {
-                menuList.reset(player)
-                menuList.header(player, 'Админка', 'Менеджер бизнесов')
+                modal.reset(player)
+                modal.header(player, 'Админка', 'Менеджер бизнесов')
 
-                menuList.append(player, 'normal', 'create', '~g~Создать бизнес')
-                menuList.append(player, 'inputs', 'selectBizForID', 'Выбрать бизнес по ID')
+                modal.append(player, 'button', 'create', '~g~Создать бизнес')
+                modal.append(player, 'input', 'selectBizForID', 'Выбрать бизнес по ID')
 
-                menuList.append(player, 'normal', 'back', '~r~<< Назад')
-                menuList.append(player, 'empty')
+                modal.append(player, 'button', 'back', '~r~<< Назад')
+                // modal.append(player, 'empty')
 
                 const all = container.all('biz')
                 for(var key in all)
                 {
-                    menuList.append(player, 'normal', `selectBiz-${all[key].id}`, `${enums.bizType[all[key].type]} #${all[key].id}`, '')
+                    modal.append(player, 'button', `selectBiz-${all[key].id}`, `${enums.bizType[all[key].type]} #${all[key].id}`, '')
 
                     // , {
                     //     desc: `
@@ -275,8 +267,8 @@ try
                     // }
                 }
 
-                menuList.toggle(player, true)
-                player.menuListTrigger = (id, value) =>
+                modal.toggle(player, true)
+                player.modalTrigger = (id, value) =>
                 {
                     if(id === 'create') admin.showCreateBizMenu(player)
                     else if(id === 'back') admin.fastAdminMenu(player, userid)
@@ -298,19 +290,19 @@ try
             else if(id === 'vehicleMenu'
                 && user.getAdmin(player) >= 5)
             {
-                menuList.reset(player)
-                menuList.header(player, 'Админка', 'Менеджер транспорта')
+                modal.reset(player)
+                modal.header(player, 'Админка', 'Менеджер транспорта')
 
-                menuList.append(player, 'normal', 'create', '~g~Создать транспорт')
-                menuList.append(player, 'normal', 'selectVehicleIn', 'Выбрать транспорт в котором сижу')
+                modal.append(player, 'button', 'create', '~g~Создать транспорт')
+                modal.append(player, 'input', 'selectVehicleIn', 'Выбрать транспорт в котором сижу')
 
-                menuList.append(player, 'normal', 'back', '~r~<< Назад')
-                menuList.append(player, 'empty')
+                modal.append(player, 'button', 'back', '~r~<< Назад')
+                // modal.append(player, 'empty')
 
                 const all = container.all('vehicles')
                 for(var key in all)
                 {
-                    menuList.append(player, 'normal', `selectVehicle-${all[key].id}`, `${all[key].model} ${vehicles.getTypeName(parseInt(key))} #${parseInt(key)}`, '')
+                    modal.append(player, 'button', `selectVehicle-${all[key].id}`, `${all[key].model} ${vehicles.getTypeName(parseInt(key))} #${parseInt(key)}`, '')
 
                     // , {
                     //     desc: `
@@ -320,8 +312,8 @@ try
                     // }
                 }
 
-                menuList.toggle(player, true)
-                player.menuListTrigger = (id, value) =>
+                modal.toggle(player, true)
+                player.modalTrigger = (id, value) =>
                 {
                     if(id === 'create') admin.showCreateVehicleMenu(player)
                     else if(id === 'back') admin.fastAdminMenu(player, userid)

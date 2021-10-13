@@ -7,6 +7,8 @@ try
 
     func.random = (min, max) =>
     {
+        if(min === 0 && max === 0)return 0
+
         let rand = min - 0.5 + Math.random() * (max - min + 1);
         return Math.round(rand);
     }

@@ -42,6 +42,11 @@ try
 
             vehicles.setMileage(data.vehicle.id, container.get('vehicles', data.vehicle.id, 'mileage') + data.mileage)
             vehicles.setFuel(data.vehicle.id, container.get('vehicles', data.vehicle.id, 'fuel') - ((enums.vehiclesData[vehicles.getModel(data.vehicle.id)].expensFuel / 100) * data.mileage))
+        },
+
+        'rentVehicle.vehicle.id': (player, vehid) =>
+        {
+            vehicles.destroy(vehid)
         }
     })
 }

@@ -13,41 +13,39 @@ try
 
             user.destroyCamera(500)
         },
-        'ui::npcDialog:trigger': data =>
+        'ui::dialogNPC:click': button =>
         {
-            data = JSON.parse(data)
-            mp.events.callRemote('client::npcDialog:trigger', data.button)
+            mp.events.callRemote('client::npcDialog:trigger', button)
         },
 
         'server::npcDialog:header': header =>
         {
-            ui.call('UI::npcDialog', {
-                cmd: 'header',
+            ui.call('UI::dialogNPC', {
+                cmd: 'updateTitle',
                 data: header
             })
         },
         'server::npcDialog:text': (text, btns) =>
         {
-            ui.call('UI::npcDialog', {
-                cmd: 'text',
-                data: {
-                    text: text,
-                    btns: btns
-                }
+            const addData = {
+                text: text
+            }
+            if(btns) addData.buttons = btns
+
+            ui.call('UI::dialogNPC', {
+                cmd: 'updateBody',
+                data: addData
             })
         },
         'server::npcDialog:toggle': toggle =>
         {
-            ui.call('UI::npcDialog', {
+            ui.call('UI::dialogNPC', {
                 cmd: 'toggle',
                 data: toggle
             })
 
-            if(toggle)
-            {
-                user.toggleHud(false)
-                user.cursor(true, false)
-            }
+            user.toggleHud(!toggle)
+            user.cursor(toggle, !toggle)
         }
     })
 }

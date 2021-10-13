@@ -11,12 +11,30 @@ try
     const enums = require('../modules/enums')
     const func = require('../modules/func')
     const container = require('../modules/container')
-    const menuList = require('../modules/menuList')
+    const modal = require('../modules/modal')
 
     const vehicles = require('../property/vehicles')
     const houses = require('../property/houses')
 
     commandsAdd({
+        'playanim': {
+            settings: {
+                admin: 5
+            },
+            func: (player, str, [ dict, name, speed, flag ]) =>
+            {
+                if(!dict || !name || !speed || !flag
+                    || !dict.length || !name.length)return user.notify(player, '/playanim [dict] [name] [speed] [flag]', 'error')
+
+                speed = parseInt(speed)
+                flag = parseInt(flag)
+
+                if(speed < 1 || flag < 0)return user.notify(player, 'speed (min 0), flag (min 0)', 'error')
+
+                player.playAnimation(dict, name, speed, flag)
+                user.notify(player, 'Play animation', 'spec')
+            }
+        },
         'getquests': {
             func: player =>
             {

@@ -17,8 +17,6 @@ try
         'client::join': (player, data) =>
         {
             data = JSON.parse(data)
-            logger.debug('client::join', data)
-
             mysql.query('select id, password from users where username = ?', [ data.username ], (err, res) =>
             {
                 if(err)return logger.error('client::join', err)

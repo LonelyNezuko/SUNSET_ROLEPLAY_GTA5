@@ -8,7 +8,7 @@ try
     require('./chat')
     require('./vehicles')
     require('./keys')
-    require('./menuList')
+    require('./modal')
     require('./ui')
     require('./npcDialog')
 
@@ -21,6 +21,8 @@ try
 
     const npc = require('../modules/npc')
 
+    const farm = require('../jobs/farm')
+
     mp.events.add(
     {
         'playerDeath': (player, reason, killer) =>
@@ -30,6 +32,8 @@ try
         },
         'playerQuit': (player, exitType, reason) =>
         {
+            user.savePosition(player)
+
             user.clearJobActive(player)
             user.save(player)
 
@@ -48,6 +52,7 @@ try
             biz.enterColshape(player, shape)
 
             npc.enterColshape(player, shape)
+            farm.enterColshape(player, shape)
         },
         'playerExitColshape': (player, shape) =>
         {
@@ -55,6 +60,7 @@ try
             biz.exitColshape(player, shape)
 
             npc.exitColshape(player, shape)
+            farm.exitColshape(player, shape)
         }
     })
 }

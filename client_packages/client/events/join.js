@@ -69,7 +69,6 @@ try
             mp.players.local.freezePosition(false)
             user.destroyCamera()
 
-            logger.log('server::join:hide', data)
             if(data.type === 'auth')
             {
                 if(data.remember) mp.storage.data.authRemember = data.remember

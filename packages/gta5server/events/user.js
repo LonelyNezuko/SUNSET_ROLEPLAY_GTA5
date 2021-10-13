@@ -20,8 +20,6 @@ try
 
     	"client::user:join": (player) =>
     	{
-			logger.debug('client::user:join')
-
             container.delete('user', player.id)
 
             container.set('user', player.id, 'username', player.name)
@@ -97,6 +95,11 @@ try
         'client::user:enterMarker': (player, name) =>
         {
             player.enterMarker(name)
+        },
+
+        'client::user:setPos': (player, x, y, z, a, vw) =>
+        {
+            user.setPos(player, x, y, z, a, vw)
         }
     })
 }

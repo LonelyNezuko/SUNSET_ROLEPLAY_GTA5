@@ -312,6 +312,13 @@ try
             key: 27,
 
             desc: "Закрыть чат"
+        },
+
+        uiClose: {
+            name: 'ESC',
+            key: 27,
+
+            desc: "Закрыть какое-либо окно"
         }
     }
 
@@ -343,6 +350,28 @@ try
 
             type: "motorcycles",
             typeName: "Скутер"
+        },
+        'blazer2': {
+            maxSpeed: 70,
+
+            maxFuel: 3,
+            expensFuel: 2,
+
+            price: 1,
+
+            type: 'off-road',
+            typeName: 'Квадрацикл'
+        },
+        'tractor2': {
+            maxSpeed: 40,
+
+            maxFuel: 10,
+            expensFuel: 5,
+
+            price: 1,
+
+            type: 'utility',
+            typeName: "Трактор"
         }
     }
 
@@ -438,7 +467,7 @@ try
     }
 
     enums.jobSalary = {
-        farm: [ 50 ]
+        farm: [ 0.02, 3, 2, 10 ]
     }
 
     module.exports = enums

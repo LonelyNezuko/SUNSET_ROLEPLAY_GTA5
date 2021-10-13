@@ -6,7 +6,7 @@ try
     require('./client/events/user')
 	require('./client/events/hud')
 	require('./client/events/vehicles')
-	require('./client/events/menuList')
+	require('./client/events/modal')
 	require('./client/events/npc')
 	require('./client/events/npcDialog')
 
@@ -16,6 +16,20 @@ try
 	const func = require('./client/modules/func')
 
 	mp.events.add({
+		'playerCreateWaypoint': position =>
+		{
+			if(user.adminLevel)
+			{
+				user.setPos(position.x, position.y, mp.game.gameplay.getGroundZFor3dCoord(position.x, position.y, position.z, 0.0, false), -1, 0)
+				setTimeout(() =>
+				{
+					logger.log('', mp.game.gameplay.getGroundZFor3dCoord(position.x, position.y, position.z, 0.0, false))
+					position.z = mp.game.gameplay.getGroundZFor3dCoord(position.x, position.y, position.z, 0.0, false)
+					mp.players.local.position = position
+				}, 1000)
+			}
+		},
+
 		'render': () =>
 		{
 			if(user.marker
@@ -41,7 +55,7 @@ try
 						cmd: 'update',
 						data: {
 							speed: {
-								speed: speed
+								speed: parseInt(speed)
 							}
 						}
 					}, false)
