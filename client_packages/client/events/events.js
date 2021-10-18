@@ -34,7 +34,8 @@ try
 		{
 			if(user.marker
 				&& !user.markerEnabled
-				&& func.distance(mp.players.local.position, user.marker.position) <= 1.5)
+				&& func.distance(mp.players.local.position, user.marker.position) <= 1.5
+				&& ((!user.markerType && !mp.players.local.vehicle) || (user.markerType && mp.players.local.vehicle)))
 			{
 				user.markerEnabled = true
 				mp.events.callRemote('client::user:enterMarker', user.marker.name)

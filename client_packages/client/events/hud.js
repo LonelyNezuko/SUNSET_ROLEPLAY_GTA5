@@ -11,7 +11,7 @@ try
 		'server::chat:open': admin =>
 		{
 			ui.call('UI::chat', {
-				cmd: 'showInput',
+				cmd: 'toggleInput',
 				data: true
 			})
             user.cursor(true, false)
@@ -19,7 +19,7 @@ try
         'server::chat:close': () =>
         {
 			ui.call('UI::chat', {
-				cmd: 'showInput',
+				cmd: 'toggleInput',
 				data: false
 			})
             user.cursor(false, true)

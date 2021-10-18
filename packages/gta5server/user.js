@@ -140,10 +140,10 @@ try
 						player.call('server::user:setAdminLevel', [ user.getAdmin(player) ])
 						player.call('server::user:updateUIKeys', [ container.get('user', player.id, 'keyBinds') ])
 
-						chat.local(player, `Добро пожаловать на ${enums.projectNameShort} | ${enums.serverName}`, -1, {
+						chat.local(player, `Добро пожаловать на ${enums.projectNameShort} | ${enums.serverName}`, {
 							timestamp: false
 						})
-						if(user.getAdmin(player)) chat.local(player, `Вы вошли, как администратор ${user.getAdmin(player)} уровня.`, '6bc5cf', {
+						if(user.getAdmin(player)) chat.local(player, `~6bc5cf~Вы вошли, как администратор ${user.getAdmin(player)} уровня.`, {
 							timestamp: false
 						})
 
@@ -638,7 +638,7 @@ try
 			container.set('user', player.id, 'quests', quests)
 			user.save(player)
 
-			chat.local(player, `Вы получили новый квест: ${questName}.`, '53df9d')
+			chat.local(player, `~53df9d~Вы получили новый квест: ${questName}.`)
 		}
 		catch(e)
 		{
@@ -660,15 +660,10 @@ try
 			if(!user.isLogged(player))return
 
 			const rentVehicle = container.get('user', player.id, 'rentVehicle')
-			if(rentVehicle)
+			if(rentVehicle
+				&& rentVehicle.onFoot)
 			{
 				rentVehicle.timer --
-
-				if(rentVehicle.timer === 1800) user.notify(player, 'У Вас осталось 30 минут на аренду транспорта', 'warning')
-				else if(rentVehicle.timer === 600) user.notify(player, 'У Вас осталось 10 минут на аренду транспорта', 'warning')
-				else if(rentVehicle.timer === 300) user.notify(player, 'У Вас осталось 5 минут на аренду транспорта', 'warning')
-				else if(rentVehicle.timer === 60) user.notify(player, 'У Вас осталась 1 минута на аренду транспорта', 'warning')
-
 				if(rentVehicle.timer <= 0)
 				{
 					user.notify(player, 'Аренда Вашего транспорт окончена', 'warning')

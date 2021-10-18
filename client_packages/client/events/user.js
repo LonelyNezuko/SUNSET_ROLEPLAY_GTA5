@@ -217,7 +217,9 @@ try
 		},
 		'server::user:userCreateError': () =>
 		{
-			ui.call('UI::userCreate:errorCharName')
+			ui.call('UI::createChar', {
+				cmd: 'showNameError'
+			})
 		},
 
 		'server::user:setAdminLevel': level =>

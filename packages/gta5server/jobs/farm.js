@@ -13,7 +13,8 @@ const farm = {}
 farm.warehouses = [
     { name: 'Склад пшена', position: new mp.Vector3(1981.79150390625, 5029.7373046875, 41.0205192565918), count: 0 },
     { name: 'Склад яблок', position: new mp.Vector3(2523.68994140625, 4984.39697265625, 44.68328857421875), count: 0 },
-    { name: 'Склад томатов', position: new mp.Vector3(1980.089111328125, 5173.009765625, 47.63911437988281), count: 0 }
+    { name: 'Склад томатов', position: new mp.Vector3(1980.089111328125, 5173.009765625, 47.63911437988281), count: 0 },
+    { name: 'Склад сена', position: new mp.Vector3(2152.629638671875, 5117.8466796875, 47.2383918762207), count: 0 }
 ]
 farm._initMode = () =>
 {
@@ -250,7 +251,7 @@ farm.setMarker = player =>
                     user.giveJobActiveSalary(player, enums.jobSalary.farm[3])
                     user.notify(player, `Вы уже заработали ${func.formatCash(user.getJobActiveSalary(player))}`, 'warning')
 
-                    if(container.get('user', player.id, 'job-farm-type-4-field-count') >= farm.markers[4][container.get('user', player.id, 'job-farm-type-4-field')].length)
+                    if(container.get('user', player.id, 'job-farm-type-4-field-count') >= farm.markers[4][container.get('user', player.id, 'job-farm-type-4-field')].length - 1)
                     {
                         container.set('user', player.id, 'job-farm-type-4-field-count', 0)
                         container.set('user', player.id, 'job-farm-type-4-field', func.random(0, farm.markers[4].length - 1))
@@ -258,6 +259,9 @@ farm.setMarker = player =>
                         user.notify(player, 'Вы успешно собрали сено с этого поля. Отправляйтесь к следующему')
                     }
                     else container.set('user', player.id, 'job-farm-type-4-field-count', container.get('user', player.id, 'job-farm-type-4-field-count') + 1)
+
+                    farm.warehouses[3].count ++
+                    farm.warehouses[3].update()
 
                     farm.setMarker(player)
                 }

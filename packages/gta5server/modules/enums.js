@@ -1,6 +1,8 @@
 const logger = require('./logger')
 try
 {
+    const mysql = require('../mysql')
+
     const enums = {}
 
     enums.characterVariables = [
@@ -373,6 +375,38 @@ try
             type: 'utility',
             typeName: "Трактор"
         }
+    }
+    enums.loadVehiclesData = () =>
+    {
+        mysql.query('select vehiclesData from settings', [], (err, res) =>
+        {
+            if(err)return logger.error('enums.loadVehicleData', err)
+
+            enums.vehiclesData = JSON.parse(res[0]['vehiclesData'])
+            logger.mysqlLog(`Настройки транспорта загружены. Всего: ${Object.keys(enums.vehiclesData).length} транспорта`)
+        })
+    }
+    enums.addVehiclesData = vehicleName =>
+    {
+        if(enums.vehiclesData[vehicleName])return enums.vehiclesData[vehicleName]
+
+        enums.vehiclesData[vehicleName] = {
+            maxSpeed: 120,
+
+            maxFuel: 10,
+            expensFuel: 5,
+
+            price: 1,
+
+            type: 'vehicle',
+            typeName: "Транспорт"
+        }
+        mysql.query('update settings set vehiclesData = ?', [ JSON.stringify(enums.vehiclesData) ], (err, res) =>
+        {
+            if(err)return logger.error('enums.addVehiclesData', err)
+        })
+
+        return enums.vehiclesData[vehicleName]
     }
 
     enums.housesType = [

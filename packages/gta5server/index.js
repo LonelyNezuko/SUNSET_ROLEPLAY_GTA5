@@ -24,6 +24,8 @@ try
 
 		const farm = require('./jobs/farm')
 
+		enums.loadVehiclesData()
+
 		vehicles.load()
 		houses.load()
 		biz.load()

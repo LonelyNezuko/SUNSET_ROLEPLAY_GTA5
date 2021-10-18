@@ -25,20 +25,11 @@ try
             }
         })
 
-        if(!toggle)
-        {
-            ui.call('UI::chat', {
-                cmd: 'hide'
-            })
-        }
-        else
-        {
-            ui.call('UI::chat', {
-                cmd: 'show',
-                data: !user.adminLevel ? false : true
-            })
-        }
-
+        ui.call('UI::chat', {
+            cmd: 'toggle',
+            data: toggle
+        })
+    
         if(!toggle)
         {
             ui.call('UI::hud', {
@@ -231,6 +222,7 @@ try
     user.markerBlip = null
     user.markerColshape = null
     user.markerEnabled = false
+    user.markerType = 0
 
     user.setMarker = (x, y, z, dimension = -1, name = '') =>
     {
@@ -251,6 +243,8 @@ try
 
         user.marker.name = name
         user.markerEnabled = false
+
+        user.markerType = 0
     }
     user.destroyMarker = () =>
     {
@@ -281,6 +275,8 @@ try
 
         user.marker.name = name
         user.markerEnabled = false
+
+        user.markerType = 1
     }
 
     user.setPos = (x, y, z, a = -1, vw = -1) =>

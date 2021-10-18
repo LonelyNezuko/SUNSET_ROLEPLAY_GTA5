@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Окт 09 2021 г., 12:58
+-- Время создания: Окт 18 2021 г., 18:15
 -- Версия сервера: 10.3.13-MariaDB-log
 -- Версия PHP: 7.3.9
 
@@ -67,8 +67,9 @@ CREATE TABLE `characters` (
 --
 
 INSERT INTO `characters` (`id`, `userID`, `lastDate`, `userCreate`, `position`, `cash`, `gender`, `skin`, `clothes`, `charname`, `dateBirth`, `nationality`, `keyBinds`, `chatsettings`, `quests`) VALUES
-(7, 2, '2021-09-28 01:22:01', 1, '{\"x\":-82.43140411376953,\"y\":6340.60205078125,\"z\":31.490371704101562,\"a\":-117.633544921875,\"vw\":0}', 400234000, 1, '{\"pedigree\":{\"one\":38,\"two\":27,\"looks\":0.5,\"skin\":0.3},\"hair\":{\"color\":12,\"head\":2,\"eyebrow\":11,\"beard\":16,\"breast\":14},\"face\":[\"0.8\",\"0.2\",\"-1.0\",\"0.3\",\"0.6\",\"-0.1\",\"-0.0\",\"-0.9\",\"-0.5\",\"0.3\",\"0.1\",\"0.1\",\"-0.6\",\"-0.5\",\"-1.0\",\"-0.8\",\"-1.0\",\"-0.6\",\"-0.9\",\"-0.9\"],\"appearance\":[22.221322906312402,24.92626441260384,1.9182443020537554,8.75105134137559,1.8332220147546365,9.336684334487215,13.321276908494653,17.666831506447192,1.5545348852734353]}', '{\"mask\":0,\"torsos\":3,\"legs\":4,\"bags\":0,\"shoes\":0,\"accessories\":0,\"undershirts\":15,\"armour\":0,\"decals\":0,\"tops\":3,\"head\":0}', 'Nezuko Kamado', '2001-01-12 21:24:05', 0, '{\"toggleVehicleEngine\":{\"name\":\"2\",\"key\":50,\"desc\":\"Завести/Заглушить двигатель\"},\"toggleVehicleLocked\":{\"name\":\"L\",\"key\":76,\"desc\":\"Закрыть/Открыть двери транспорта\"},\"toggleVehicleBelt\":{\"name\":\"K\",\"key\":75,\"desc\":\"Ремень безопастности\"},\"action\":{\"name\":\"E\",\"key\":69,\"desc\":\"Взаимодействие\"},\"fastAdminMenu\":{\"name\":\"8\",\"key\":56,\"desc\":\"Быстрое админ-меню\",\"admin\":1}}', '{\"timestamp\":true}', '[{\"name\":\"Первый тестовый квест\",\"line\":\"Тест\",\"desc\":\"Это тестовый квест для тестов\",\"tasks\":[{\"name\":\"Поговорить с Эдвардом\",\"maxProgress\":1,\"progress\":1},{\"name\":\"Арендовать скутер\",\"maxProgress\":1,\"progress\":1}],\"prize\":{\"desc\":\"$ 100.000.000\",\"data\":{\"cash\":100000000}},\"owner\":{\"type\":\"System\",\"name\":\"system\",\"position\":[0,0,0]},\"deleted\":false,\"status\":\"completed\"}]'),
-(15, 10, '2021-10-09 12:56:29', 1, '{\"x\":-83.78398132324219,\"y\":6323.48974609375,\"z\":31.490367889404297,\"a\":130.18215942382812,\"vw\":0}', 1200, 0, '{\"genetic\":{\"mother\":0,\"father\":0,\"similarity\":0.5,\"skinTone\":0.5},\"hair\":{\"color\":0,\"head\":0,\"eyebrow\":0,\"beard\":0,\"breast\":0},\"face\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"appearance\":[0,0,0,0,0,0,0,0,0]}', '{}', 'No Name', '2021-09-28 15:51:21', 0, '{\"toggleVehicleEngine\":{\"name\":\"2\",\"key\":50,\"desc\":\"Завести/Заглушить двигатель\"},\"toggleVehicleLocked\":{\"name\":\"L\",\"key\":76,\"desc\":\"Закрыть/Открыть двери транспорта\"},\"toggleVehicleBelt\":{\"name\":\"K\",\"key\":75,\"desc\":\"Ремень безопастности\"},\"action\":{\"name\":\"E\",\"key\":69,\"desc\":\"Взаимодействие\"},\"fastAdminMenu\":{\"name\":\"8\",\"key\":56,\"desc\":\"Быстрое админ-меню\",\"admin\":1},\"savePosition\":{\"name\":\"F8\",\"key\":119,\"desc\":\"Сохранить координаты\",\"admin\":5},\"chatOpen\":{\"name\":\"T\",\"key\":84,\"desc\":\"Открыть чат\"},\"chatClose\":{\"name\":\"ESC\",\"key\":27,\"desc\":\"Закрыть чат\"}}', '{\"timestamp\":false}', '[{\"name\":\"Первый тестовый квест\",\"line\":\"Тест\",\"desc\":\"Это тестовый квест для тестов\",\"tasks\":[{\"name\":\"Поговорить с Эдвардом\",\"maxProgress\":1,\"progress\":0},{\"name\":\"Арендовать скутер\",\"maxProgress\":1,\"progress\":0}],\"prize\":{\"desc\":\"$ 100.000.000\",\"data\":{\"cash\":100000000}},\"owner\":{\"type\":\"System\",\"name\":\"system\",\"position\":[0,0,0]},\"deleted\":false,\"status\":\"process\"}]');
+(15, 10, '2021-10-13 22:12:57', 1, '{\"x\":2426.018798828125,\"y\":4979.7392578125,\"z\":45.91637420654297,\"a\":77.796630859375,\"vw\":0}', 100001000, 0, '{\"genetic\":{\"mother\":0,\"father\":0,\"similarity\":0.5,\"skinTone\":0.5},\"hair\":{\"color\":0,\"head\":0,\"eyebrow\":0,\"beard\":0,\"breast\":0},\"face\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"appearance\":[0,0,0,0,0,0,0,0,0]}', '{\"head\":0,\"mask\":0,\"torsos\":15,\"legs\":18,\"bags\":0,\"shoes\":34,\"accessories\":0,\"undershirts\":15,\"armour\":0,\"decals\":0,\"tops\":15}', 'No Name', '2021-09-28 15:51:21', 0, '{\"toggleVehicleEngine\":{\"name\":\"2\",\"key\":50,\"desc\":\"Завести/Заглушить двигатель\"},\"toggleVehicleLocked\":{\"name\":\"L\",\"key\":76,\"desc\":\"Закрыть/Открыть двери транспорта\"},\"toggleVehicleBelt\":{\"name\":\"K\",\"key\":75,\"desc\":\"Ремень безопастности\"},\"action\":{\"name\":\"E\",\"key\":69,\"desc\":\"Взаимодействие\"},\"fastAdminMenu\":{\"name\":\"8\",\"key\":56,\"desc\":\"Быстрое админ-меню\",\"admin\":1},\"savePosition\":{\"name\":\"F8\",\"key\":119,\"desc\":\"Сохранить координаты\",\"admin\":5},\"chatOpen\":{\"name\":\"T\",\"key\":84,\"desc\":\"Открыть чат\"},\"chatClose\":{\"name\":\"ESC\",\"key\":27,\"desc\":\"Закрыть чат\"},\"modalClose\":{\"name\":\"ESC\",\"key\":27,\"desc\":\"Закрыть модальное окно\"},\"uiClose\":{\"name\":\"ESC\",\"key\":27,\"desc\":\"Закрыть какое-либо окно\"}}', '{\"timestamp\":false}', '[{\"name\":\"Первый тестовый квест\",\"line\":\"Тест\",\"desc\":\"Это тестовый квест для тестов\",\"tasks\":[{\"name\":\"Поговорить с Эдвардом\",\"maxProgress\":1,\"progress\":1},{\"name\":\"Арендовать скутер\",\"maxProgress\":1,\"progress\":1}],\"prize\":{\"desc\":\"$ 100.000.000\",\"data\":{\"cash\":100000000}},\"owner\":{\"type\":\"System\",\"name\":\"system\",\"position\":[0,0,0]},\"deleted\":false,\"status\":\"completed\"}]'),
+(16, 11, '2021-10-14 11:13:14', 1, '{\"x\":-85.97345733642578,\"y\":6332.583984375,\"z\":31.490352630615234,\"a\":169.04586791992188,\"vw\":0}', 100001000, 1, '{\"genetic\":{\"mother\":17,\"father\":5,\"skinTone\":0.5,\"similarity\":0},\"face\":[0.1,-0.9,-1,-0.2,0.6,-0.4,0.3,0.6,0.8,0.4,-0.6,0.8,0.3,0,0.5,-0.9,-0.2,-0.4,0.8,0.3],\"hair\":{\"color\":58,\"head\":2,\"eyebrow\":10,\"beard\":19,\"breast\":3},\"appearance\":[1,22,1,5,9,6,21,1,9]}', '{\"head\":0,\"mask\":0,\"torsos\":2,\"legs\":0,\"bags\":0,\"shoes\":15,\"accessories\":0,\"undershirts\":15,\"armour\":0,\"decals\":0,\"tops\":2}', 'User Test', '1999-02-01 22:21:18', 2, '{\"toggleVehicleEngine\":{\"name\":\"2\",\"key\":50,\"desc\":\"Завести/Заглушить двигатель\"},\"toggleVehicleLocked\":{\"name\":\"L\",\"key\":76,\"desc\":\"Закрыть/Открыть двери транспорта\"},\"toggleVehicleBelt\":{\"name\":\"K\",\"key\":75,\"desc\":\"Ремень безопастности\"},\"action\":{\"name\":\"E\",\"key\":69,\"desc\":\"Взаимодействие\"},\"fastAdminMenu\":{\"name\":\"8\",\"key\":56,\"desc\":\"Быстрое админ-меню\",\"admin\":1},\"savePosition\":{\"name\":\"F8\",\"key\":119,\"desc\":\"Сохранить координаты\",\"admin\":5},\"chatOpen\":{\"name\":\"T\",\"key\":84,\"desc\":\"Открыть чат\"},\"chatClose\":{\"name\":\"ESC\",\"key\":27,\"desc\":\"Закрыть чат\"},\"modalClose\":{\"name\":\"ESC\",\"key\":27,\"desc\":\"Закрыть модальное окно\"},\"uiClose\":{\"name\":\"ESC\",\"key\":27,\"desc\":\"Закрыть какое-либо окно\"}}', '{\"timestamp\":false}', '[{\"name\":\"Первый тестовый квест\",\"line\":\"Тест\",\"desc\":\"Это тестовый квест для тестов\",\"tasks\":[{\"name\":\"Поговорить с Эдвардом\",\"maxProgress\":1,\"progress\":1},{\"name\":\"Арендовать скутер\",\"maxProgress\":1,\"progress\":1}],\"prize\":{\"desc\":\"$ 100.000.000\",\"data\":{\"cash\":100000000}},\"owner\":{\"type\":\"System\",\"name\":\"system\",\"position\":[0,0,0]},\"deleted\":false,\"status\":\"completed\"}]'),
+(17, 12, '2021-10-14 11:13:35', 1, '{\"x\":2429.880859375,\"y\":4982.734375,\"z\":45.833194732666016,\"a\":-169.6179962158203,\"vw\":0}', 1200, 0, '{\"genetic\":{\"mother\":13,\"father\":16,\"skinTone\":0.9,\"similarity\":0.7},\"face\":[0.1,0.5,-0.2,0,0.8,0.6,-0.8,0.7,0.7,-0.3,0.5,0.8,0.6,0.9,0.5,0.2,-1,-0.1,-0.8,-0.9],\"hair\":{\"color\":62,\"head\":19,\"eyebrow\":16,\"beard\":26,\"breast\":7},\"appearance\":[4,12,9,3,5,0,61,10,8]}', '{\"head\":0,\"mask\":0,\"torsos\":0,\"legs\":0,\"bags\":0,\"shoes\":34,\"accessories\":0,\"undershirts\":15,\"armour\":0,\"decals\":0,\"tops\":16}', 'Nezuko Kamado', '1999-02-01 11:12:44', 2, '{\"toggleVehicleEngine\":{\"name\":\"2\",\"key\":50,\"desc\":\"Завести/Заглушить двигатель\"},\"toggleVehicleLocked\":{\"name\":\"L\",\"key\":76,\"desc\":\"Закрыть/Открыть двери транспорта\"},\"toggleVehicleBelt\":{\"name\":\"K\",\"key\":75,\"desc\":\"Ремень безопастности\"},\"action\":{\"name\":\"E\",\"key\":69,\"desc\":\"Взаимодействие\"},\"fastAdminMenu\":{\"name\":\"8\",\"key\":56,\"desc\":\"Быстрое админ-меню\",\"admin\":1},\"savePosition\":{\"name\":\"F8\",\"key\":119,\"desc\":\"Сохранить координаты\",\"admin\":5},\"chatOpen\":{\"name\":\"T\",\"key\":84,\"desc\":\"Открыть чат\"},\"chatClose\":{\"name\":\"ESC\",\"key\":27,\"desc\":\"Закрыть чат\"},\"uiClose\":{\"name\":\"ESC\",\"key\":27,\"desc\":\"Закрыть какое-либо окно\"}}', '{\"timestamp\":false}', '[{\"name\":\"Первый тестовый квест\",\"line\":\"Тест\",\"desc\":\"Это тестовый квест для тестов\",\"tasks\":[{\"name\":\"Поговорить с Эдвардом\",\"maxProgress\":1,\"progress\":0},{\"name\":\"Арендовать скутер\",\"maxProgress\":1,\"progress\":0}],\"prize\":{\"desc\":\"$ 100.000.000\",\"data\":{\"cash\":100000000}},\"owner\":{\"type\":\"System\",\"name\":\"system\",\"position\":[0,0,0]},\"deleted\":false,\"status\":\"process\"}]');
 
 -- --------------------------------------------------------
 
@@ -112,6 +113,23 @@ CREATE TABLE `promocodes` (
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `settings`
+--
+
+CREATE TABLE `settings` (
+  `vehiclesData` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `settings`
+--
+
+INSERT INTO `settings` (`vehiclesData`) VALUES
+('{\"t20\":{\"maxSpeed\":120,\"maxFuel\":10,\"expensFuel\":5,\"price\":1,\"type\":\"vehicle\",\"typeName\":\"Транспорт\"},\"supra\":{\"maxSpeed\":120,\"maxFuel\":10,\"expensFuel\":5,\"price\":1,\"type\":\"vehicle\",\"typeName\":\"Транспорт\"}}');
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `users`
 --
 
@@ -134,8 +152,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `regDate`, `lastDate`, `regIP`, `lastIP`, `admin`, `adminData`, `promo`) VALUES
-(2, 'MyAngelNezuko', '1444e0f8ad7f76adb90b9c07e9a09d5002d6161e015f4eecc2ffa694dc9a05e9', 'myangelnezuko@yandex.ru', '2021-09-14 21:12:03', '2021-09-28 01:22:01', '127.0.0.1', '127.0.0.1', 5, '{\"resetDate\":\"2021-09-15T07:57:16.901Z\",\"resetUsername\":\"MyAngelNezuko\",\"lastLevel\":5}', '{}'),
-(10, 'TestUser1', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 'asdas@maiol.sd', '2021-09-28 15:51:20', '2021-10-09 12:56:29', '127.0.0.1', '127.0.0.1', 5, '{}', '{\"name\":\"\",\"enable\":false}');
+(10, 'TestUser1', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 'asdas@maiol.sd', '2021-09-28 15:51:20', '2021-10-13 22:12:57', '127.0.0.1', '127.0.0.1', 5, '{}', '{\"name\":\"\",\"enable\":false}'),
+(11, 'UserTest', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 'dasdasd@mail.sd', '2021-10-13 18:24:50', '2021-10-14 11:13:14', '127.0.0.1', '127.0.0.1', 0, '{}', '{\"name\":\"\",\"enable\":false}'),
+(12, 'MyAngelNezuko', '1444e0f8ad7f76adb90b9c07e9a09d5002d6161e015f4eecc2ffa694dc9a05e9', 'test@mail.ru', '2021-10-14 11:09:40', '2021-10-14 11:13:35', '127.0.0.1', '127.0.0.1', 5, '{}', '{\"name\":\"\",\"enable\":false}');
 
 -- --------------------------------------------------------
 
@@ -164,7 +183,8 @@ CREATE TABLE `vehicles` (
 INSERT INTO `vehicles` (`id`, `model`, `position`, `heading`, `dimension`, `owner`, `locked`, `number`, `color`, `mileage`, `fuel`) VALUES
 (6, 't20', '{\"x\":-517.3497924804688,\"y\":-668.698974609375,\"z\":33.0715446472168}', 0.493153, 0, '{\"player\":7}', 0, 'NONE', '[[255,255,255],[255,255,255]]', 0, 40),
 (7, 't20', '{\"x\":227.19366455078125,\"y\":-987.7410278320312,\"z\":-99.42381286621094}', -164.103, 65, '{\"player\":7}', 0, 'NONE', '[[255,255,255],[255,255,255]]', 0, 40),
-(9, 't20', '{\"x\":225.5995330810547,\"y\":-994.8980712890625,\"z\":-99.42389678955078}', -138.418, 67, '{\"player\":7}', 0, 'NONE', '[[255,255,255],[255,255,255]]', 0, 40);
+(9, 't20', '{\"x\":225.5995330810547,\"y\":-994.8980712890625,\"z\":-99.42389678955078}', -138.418, 67, '{\"player\":7}', 0, 'NONE', '[[255,255,255],[255,255,255]]', 0, 40),
+(16, 't20', '{\"x\":2428.201416015625,\"y\":4980.7109375,\"z\":45.815311431884766}', 134.537, 0, '{\"player\":17}', 0, 'NONE', '[[0,0,0],[255,255,255]]', 0, 40);
 
 --
 -- Индексы сохранённых таблиц
@@ -214,7 +234,7 @@ ALTER TABLE `business`
 -- AUTO_INCREMENT для таблицы `characters`
 --
 ALTER TABLE `characters`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT для таблицы `houses`
@@ -226,13 +246,13 @@ ALTER TABLE `houses`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT для таблицы `vehicles`
 --
 ALTER TABLE `vehicles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

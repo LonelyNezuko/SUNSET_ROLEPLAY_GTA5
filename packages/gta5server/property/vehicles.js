@@ -45,7 +45,7 @@ try
     }
     vehicles.create = (model, position, data = {}) =>
     {
-        if(!enums.vehiclesData[model])return false
+        if(!enums.vehiclesData[model]) enums.addVehiclesData(model)
 
         const settingsVeh = {}
 
@@ -156,7 +156,8 @@ try
 
         container.set('user', player.id, 'rentVehicle', {
             vehicle: veh,
-            timer: 3600
+            timer: 0,
+            onFoot: false
         })
 
         if(veh) setTimeout(() => player.putIntoVehicle(veh, 0), 500)
@@ -336,10 +337,25 @@ try
                 doors: vehicles.getLocked(vehicle.id)
             } ])
         }
+
+        if(container.get('user', player.id, 'rentVehicle')
+            && container.get('user', player.id, 'rentVehicle').vehicle.id === vehicle.id)
+        {
+            container.get('user', player.id, 'rentVehicle').onFoot = false
+            container.get('user', player.id, 'rentVehicle').timer = 0
+        }
     }
     vehicles.onExit = (player, vehicle) =>
     {
         player.call('server::user:toggleSpeedometer', [ false ])
+        if(container.get('user', player.id, 'rentVehicle')
+            && container.get('user', player.id, 'rentVehicle').vehicle.id === vehicle.id)
+        {
+            user.notify(player, 'У Вас есть 15 минут, чтобы вернуться в транспорт', 'warning')
+
+            container.get('user', player.id, 'rentVehicle').timer = 900
+            container.get('user', player.id, 'rentVehicle').onFoot = true
+        }
     }
 
     vehicles.timer = () =>

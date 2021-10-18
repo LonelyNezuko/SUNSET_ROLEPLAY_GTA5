@@ -19,9 +19,11 @@ try
             mp.players.forEach(pl =>
             {
                 if(user.isLogged(pl)
-                    && func.distance2D(player.position, pl.position) < 30) chat.local(pl, text, -1, {
+                    && func.distance2D(player.position, pl.position) < 30) chat.local(pl, `<b>${user.getCharName(player)} [${player.id}]</b> говорит: ${text}`, {
                         id: pl.id,
-                        name: user.getCharName(pl)
+                        actions: {
+                            report: true
+                        }
                     })
             })
         },
