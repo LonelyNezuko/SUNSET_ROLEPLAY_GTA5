@@ -4,6 +4,8 @@ try
     const mysql2 = require('mysql2')
     const mysql = {}
 
+    const CONFIG_mysql = require('./configs/mysql.js')
+
     mysql.connection = null
 
     mysql.connect = async (callback) =>

@@ -216,6 +216,8 @@ try
         const type = container.get('vehicles', vehid, 'owner')
 
         if(type.player)return 'Игрока'
+        if(type.rent)return 'Аренда'
+        
         return 'Ничей'
     }
 

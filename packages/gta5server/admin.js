@@ -99,24 +99,50 @@ try
 
     admin.vehicleManager = (player, vehid = -1) =>
     {
-        if(!user.getAdmin(player) < 5)return
+        if(user.getAdmin(player) < 5)return user.notify(player, 'Не доступно', 'error')
 
         modal.reset(player)
         modal.header(player, 'Админка', 'Менеджер транспорта')
 
-        // if(vehid !== -1
-        //     && vehicles.isState(vehid))
-        // {
-        //     modal.append(player, 'button', '', `~3be4de~${vehicles.getModel(vehid)}`)
-        //     modal.append(player, 'empty')
-        //
-        //     const typeList = [ 'player' ]
-        //     modal.append(player, 'select', 'type', 'Владелец транспорта', typeList.indexOf(vehicles.getOwner(vehid)), {
-        //         list: [ 'Игрок' ]
-        //     })
-        //     modal.append(player, 'input', 'typeID', 'ID владельца', vehicles.getOwner(vehid).id)
-        //     return
-        // }
+        if(vehid !== -1
+            && vehicles.getVehicle(vehid))
+        {
+            modal.append(player, 'button', '', `${vehicles.getModel(vehid)} [${vehid}]`)
+            modal.append(player, 'empty')
+
+            modal.append(player, 'button', '', `Владелец: ${vehicles.getTypeName(vehid)}`)
+            modal.append(player, 'input', 'typeID', 'ID владельца', vehicles.getOwner(vehid).id, {
+                descr: 'Нажмите Enter, чтобы изменить'
+            })
+
+            modal.append(player, 'empty')
+
+            modal.append(player, 'select', 'position', `Позиция`, 1, {
+                list: [ vehicles.getVehicle(vehid).position.x, vehicles.getVehicle(vehid).position.y, vehicles.getVehicle(vehid).position.z ],
+                descr: 'Нажмите Enter, чтобы телепортироваться'
+            })
+
+            modal.append(player, 'empty')
+            modal.append(player, 'button', 'back', '<< Назад')
+
+            player.modalTrigger = (id, value) =>
+            {
+                if(id === 'typeID')
+                {
+                    container.get('vehicles', vehid, 'owner')[Object.keys(container.get('vehicles', vehid, 'owner'))[0]] = value
+                    vehicles.save(vehid)
+
+                    user.notify(player, 'Вы успешно изменили владельца транспорта')
+                }
+                else if(id === 'position')
+                {
+                    modal.toggle(player, false)
+                    user.setPos(player, vehicles.getVehicle(vehid).position.x + 1.0, vehicles.getVehicle(vehid).position.y + 1.0, vehicles.getVehicle(vehid).position.z, vehicles.getVehicle(vehid).heading, vehicles.getVehicle(vehid).dimension)
+                }
+                else if(id === 'back') admin.vehicleManager(player)
+            }
+            return
+        }
 
         modal.append(player, 'button', 'create', 'Создать транспорт')
         modal.append(player, 'button', 'back', '<< Назад')
@@ -156,7 +182,6 @@ try
                         defaultVehicleModel = key
                     }
                 }
-                // if(!defaultVehicle)return user.notify(player, 'Не удалось открыт меню создания транспорта', 'error')
 
                 modal.append(player, 'input', 'model', 'Модель транспорта', defaultVehicleModel)
 
@@ -177,7 +202,7 @@ try
                 modal.append(player, 'empty')
 
                 modal.append(player, 'button', 'create', 'Создать транспорт')
-                modal.append(player, 'button', '_exit', 'Закрыть')
+                modal.append(player, 'button', 'back', '<< Назад')
 
                 modal.toggle(player, true)
                 player.modalTrigger = (id, value, elems) =>
@@ -201,8 +226,9 @@ try
                         if(!veh)return user.notify(player, 'Не удалось создать транспорт', 'error')
 
                         user.notify(player, 'Транспорт был успешно создан', 'warning')
-                        modal.toggle(player, false)
+                        admin.vehicleManager(player, veh.id)
                     }
+                    else if(id === 'back') admin.vehicleManager(player)
                 }
             }
             else if(id === 'back') admin.fastAdminMenu(player, userid)
@@ -220,9 +246,9 @@ try
                 const id = parseInt(value)
                 if(isNaN(id)
                     || id < 0)return user.notify(player, 'Введите ID транспорта', 'error')
-                if(!vehicles.isState(id))return user.notify(player, 'Транспорт не найден', 'error')
+                if(!vehicles.getVehicle(id))return user.notify(player, 'Транспорт не найден', 'error')
 
-                admin.vehicleManager(player, veh.id)
+                admin.vehicleManager(player, id)
             }
 
             for(var key in all)
