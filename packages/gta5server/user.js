@@ -151,7 +151,11 @@ try
 
 						setTimeout(() =>
 						{
+							mp.events.call('user:join', player)
+
 							user.spawn(player)
+							user.sendLog(player, `Авторизовался. IP:${player.ip}`)
+
 							user.addQuest(player, 'Первый тестовый квест', 'Тест', 'Это тестовый квест для тестов', [
 								{
 									name: 'Поговорить с Эдвардом',
@@ -691,6 +695,11 @@ try
 				user.setClothes(player, 'job-farm', false)
 				break
 			}
+			case 'forest':
+			{
+				// user.setClothes(player, 'job-foest', false)
+				break
+			}
 			default:
 			{
 				user.destroyMarker(player)
@@ -707,11 +716,17 @@ try
 		if(!user.isLogged(player))return false
 		if(!user.getJobActive(player))return false
 
+		if(user.getJobActive(player) === 'forest'
+			&& container.get('user', player.id, 'job-forest-type') === 1
+			&& container.get('user', player.id, 'job-forest-trailer')) mp.events.call('vehicles:destroy', player, container.get('user', player.id, 'job-forest-trailer').id)
+
 		if(user.getJobActiveSalary(player) > 0)
 		{
 			user.giveCash(player, user.getJobActiveSalary(player))
 			container.set('user', player.id, 'jobActiveSalary', 0)
 		}
+		if(container.get('user', player.id, 'job-rent-vehicle')
+			&& container.get('user', player.id, 'job-rent-vehicle') !== null) mp.events.call('vehicles:destroy', player, container.get('user', player.id, 'job-rent-vehicle').id)
 		return user.setJobActive(player, false)
 	}
 	user.getJobActiveSalary = player =>
@@ -794,36 +809,27 @@ try
 		})
 	}
 
-	// [
-	// 	{
-	// 		name: 'Первые деньги',
-	// 		line: 'Начало',
-	// 		desc: 'Всем нужны деньги, поэтому давай работать',
-	// 		tasks: [
-	// 			{
-	// 				name: 'Заработать $ 5.000',
-	//
-	// 				maxProgress: 5000.0,
-	// 				progress: 2500.0
-	// 			}
-	// 		],
-	// 		prize: {
-	// 			desc: '$ 5.000.00',
-	// 			data:
-	// 			{
-	// 				cash: 5000
-	// 			}
-	// 		},
-	// 		owner: {
-	// 			type: 'NPC',
-	// 			name: 'Майлка',
-	// 			position: [ x, y, z ]
-	// 		},
-	//
-	// 		status: 'process',
-	// 		deleted: false
-	// 	}
-	// ]
+	user.showPrompt = (player, text) =>
+	{
+		if(!user.isLogged(player))return
+		player.call('server::user:showPrompt', [ text ])
+	}
+
+
+	user.sendLog = (player, text, type = 0) =>
+	{
+		if(!user.isLogged(player))return
+
+		mysql.query('insert into logs (target, text, type) values (?, ?, ?)', [ !type ? user.getID(player) : container.get('user', player.id, 'user_id'), text, type ], err =>
+		{
+			if(err)return logger.error('user.sendLog', err)
+		})
+	}
+
+	user.setBlipDisplay = (player, blip, display) =>
+	{
+		player.call('server::user:setBlipDisplay', [ blip, display ])
+	}
 
 	// inventory
 	// user.inventory = {}

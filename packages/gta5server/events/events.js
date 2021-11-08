@@ -40,6 +40,7 @@ try
             if(container.get('user', player.id, '/veh') !== null) vehicles.destroy(container.get('user', player.id, '/veh'))
             if(container.get('user', player.id, 'rentVehicle') !== null) vehicles.destroy(container.get('user', player.id, 'rentVehicle').vehicle.id)
 
+            user.sendLog(player, `Покинул игру. IP:${player.ip}`)
             container.delete('user', player.id)
         },
 
@@ -61,6 +62,12 @@ try
 
             npc.exitColshape(player, shape)
             farm.exitColshape(player, shape)
+        },
+
+        'trailerAttached': (vehicle, trailer) =>
+        {
+            logger.log('trailerAttached', vehicle, trailer)
+            vehicles.trailerAttached(vehicle, trailer)
         }
     })
 }

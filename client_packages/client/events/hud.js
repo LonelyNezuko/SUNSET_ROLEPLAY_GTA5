@@ -41,6 +41,13 @@ try
             }
 			else mp.events.callRemote('client::chat:send', text)
         },
+		'ui::hud:prompt': data =>
+		{
+			data = JSON.parse(data)
+
+			mp.events.callRemote('client::user:promptTrigger', data.response)
+			user.cursor(false, true)
+		},
 
 		'server::chat:send': (text, data) =>
 		{

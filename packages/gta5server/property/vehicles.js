@@ -174,6 +174,8 @@ try
             && container.get('vehicles', veh.id, 'owner').player !== container.get('user', player.id, 'id'))return false
         if(container.get('vehicles', veh.id, 'owner').rent
             && container.get('vehicles', veh.id, 'owner').rent !== container.get('user', player.id, 'id'))return false
+        if(container.get('vehicles', veh.id, 'owner').trailer
+            && container.get('vehicles', veh.id, 'owner').trailer !== player.id)return false
 
         return true
     }
@@ -186,6 +188,23 @@ try
             if(item.id === vehid) veh = item
         })
         return veh
+    }
+
+    vehicles.getServerID = vehID =>
+    {
+        const allVehicles = container.all('vehicles')
+        let id = -1
+
+        for(var key in allVehicles)
+        {
+            if(allVehicles[key].id === vehID) id = parseInt(key)
+        }
+        return id
+    }
+    vehicles.getID = id =>
+    {
+        if(!vehicles.getVehicle(id))return -1
+        return container.get('vehicles', id, 'id')
     }
 
     vehicles.getEngine = vehid =>
@@ -217,7 +236,7 @@ try
 
         if(type.player)return 'Игрока'
         if(type.rent)return 'Аренда'
-        
+
         return 'Ничей'
     }
 
@@ -320,6 +339,18 @@ try
         })
     }
 
+    vehicles.getDriver = veh =>
+    {
+        let ret = -1
+        player.forEach(pl =>
+        {
+            if(user.isLogged(pl)
+                && pl.vehicle === veh
+                && pl.seat === 0) ret = pl
+        })
+        return ret
+    }
+
 
     // Events
     vehicles.onEnter = (player, vehicle, seat) =>
@@ -367,6 +398,24 @@ try
             if(!vehicles.getVehicle(veh.id))return veh.destroy()
             if(veh.engineHealth < 300) vehicles.setEngine(veh.id, false, true)
         })
+    }
+
+    vehicles.trailerAttached = (veh, trailer) =>
+    {
+        // logger.log('', veh, trailer, veh.trailer)
+
+        if(!vehicles.getVehicle(veh))return veh.destroy()
+        if(!trailer.getVehicle(trailer))return veh.destroy()
+
+        const driver = vehicles.getDriver(veh)
+        if(driver === -1)return veh.trailer = 0
+
+        if(container.get('vehicles', trailer.id, 'owner').trailer
+            && container.get('vehicles', trailer.id, 'owner').trailer !== driver.id)
+        {
+            veh.trailer = 0
+            return user.notify(driver, 'Вы не можете прицепить данный трейлер', 'error')
+        }
     }
 
     module.exports = vehicles

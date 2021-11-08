@@ -17,6 +17,12 @@ try
     const houses = require('../property/houses')
 
     commandsAdd({
+        'gettrailer': {
+            func: player =>
+            {
+                logger.log('', player.vehicle.trailer, player.vehicle.traileredBy)
+            }
+        },
         'playanim': {
             settings: {
                 admin: 5

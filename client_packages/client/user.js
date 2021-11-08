@@ -29,7 +29,7 @@ try
             cmd: 'toggle',
             data: toggle
         })
-    
+
         if(!toggle)
         {
             ui.call('UI::hud', {
@@ -282,6 +282,23 @@ try
     user.setPos = (x, y, z, a = -1, vw = -1) =>
     {
         mp.events.callRemote('client::user:setPos', x, y, z, a, vw)
+    }
+
+    user.showPrompt = text =>
+    {
+        ui.call('UI::hud', {
+            cmd: 'showPrompt',
+            data: {
+                id: -1,
+                text: text
+            }
+        })
+        user.cursor(true, false)
+    }
+
+    user.setBlipDisplay = (blip, display) =>
+    {
+        blip.setDisplay(display)
     }
 
     exports = user

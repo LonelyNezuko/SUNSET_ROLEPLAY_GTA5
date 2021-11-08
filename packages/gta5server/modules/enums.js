@@ -246,18 +246,8 @@ try
         'setadmin': 4,
         'veh': 2, // Сюда же и /delveh
 
-        'createvehicle': 5,
-        'deletevehicle': 5,
-
         'tphouse': 1,
-        'tphouseint': 1,
-
-        'createhouse': 5,
-        'deletehouse': 5,
-        'edithouse': 5,
-
-        'createbiz': 5,
-        'deletebiz': 5
+        'tphouseint': 1
     }
 
     enums.keyDefaultBinds =
@@ -501,7 +491,8 @@ try
     }
 
     enums.jobSalary = {
-        farm: [ 0.02, 3, 2, 10 ]
+        farm: [ 0.02, 3, 2, 10 ],
+        forest: [ 15, 400 ]
     }
 
     module.exports = enums

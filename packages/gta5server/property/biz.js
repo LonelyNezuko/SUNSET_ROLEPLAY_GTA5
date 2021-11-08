@@ -156,6 +156,17 @@ try
         if(!biz.isState(id))return -1
         return container.get('biz', id, 'id')
     }
+    biz.getServerID = bizID =>
+    {
+        const allBiz = container.all('biz')
+        let id = -1
+
+        for(var key in allBiz)
+        {
+            if(allBiz[key].id === bizID) id = parseInt(key)
+        }
+        return id
+    }
     biz.getType = id =>
     {
         if(!biz.isState(id))return -1
@@ -165,6 +176,19 @@ try
     {
         if(!biz.isState(id))return -1
         return container.get('biz', id, 'locked')
+    }
+
+    biz.tp = (player, id) =>
+    {
+        if(!biz.isState(id)
+            || !user.isLogged(player))return
+
+        user.setPos(player,
+            container.get('biz', id, 'position').x,
+            container.get('biz', id, 'position').y,
+            container.get('biz', id, 'position').z,
+            container.get('biz', id, 'position').a,
+            container.get('biz', id, 'dimension'))
     }
 
 

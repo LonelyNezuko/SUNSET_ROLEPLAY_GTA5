@@ -11,6 +11,7 @@ try
     const vehicles = require('../property/vehicles')
 
     const farm = require('../jobs/farm')
+    const forest = require('../jobs/forest')
 
     const npcDialog = require('./npcDialog')
     const npc = {}
@@ -133,6 +134,7 @@ try
         if(id === -1)return
 
         if(npc.getHash(id).indexOf('job-farm') !== -1) farm.actionNPC(player, npc.getHash(id))
+        else if(npc.getHash(id).indexOf('job-forest') !== -1) forest.actionNPC(player, npc.getHash(id))
         else
         {
             switch(npc.getHash(id))

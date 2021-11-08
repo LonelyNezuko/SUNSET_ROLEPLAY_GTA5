@@ -8,7 +8,14 @@ try
 
     const mysql = require('../mysql')
 
+    const farm = require('../jobs/farm')
+
     mp.events.add({
+        'user:join': player =>
+        {
+            farm._playerJoin(player)
+        },
+
         "client::user:setVW": (player, vw) =>
     	{
     		player.dimension = vw
@@ -100,6 +107,10 @@ try
         'client::user:setPos': (player, x, y, z, a, vw) =>
         {
             user.setPos(player, x, y, z, a, vw)
+        },
+        'client::user:promptTrigger': (player, response) =>
+        {
+            player.promptTrigger(response)
         }
     })
 }

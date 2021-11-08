@@ -314,6 +314,15 @@ try
 		'server::user:setRaceMarker': (x, y, z, dimension, name) =>
 		{
 			user.setRaceMarker(x, y, z, dimension, name)
+		},
+
+		'server::user:showPrompt': text =>
+		{
+			user.showPrompt(text)
+		},
+		'server::user:setBlipDisplay': (blip, display) =>
+		{
+			user.setBlipDisplay(blip, display)
 		}
 	})
 }

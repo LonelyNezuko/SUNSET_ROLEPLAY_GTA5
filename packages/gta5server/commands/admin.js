@@ -13,7 +13,7 @@ try
     const biz = require('../property/biz')
 
     const admin = require('../admin')
-    
+
     commandsAdd({
         'spawn': {
             settings: {
@@ -50,6 +50,9 @@ try
 
                 user.setAdmin(target, level, user.getUserName(player))
                 user.notify(player, `Вы успешно изменили уровень админки ${user.getUserName(target)} на ${level}.`)
+
+                user.sendLog(target, `Был изменен уровень админки на ${level}. Изменил: PLAYER:${user.getID(player)}`, 1)
+                user.sendLog(player, `Изменил уровень админки PLAYER:${user.getID(target)} на ${level}`, 1)
             }
         },
 
@@ -94,78 +97,6 @@ try
             }
         },
 
-        'createvehicle': {
-            settings: {
-                admin: enums.commandsAdmin.createvehicle
-            },
-            func: player =>
-            {
-                admin.showCreateVehicleMenu(player)
-            }
-        },
-        'deletevehicle': {
-            settings: {
-                admin: enums.commandsAdmin.deletevehicle,
-                isInVehicle: true
-            },
-            func: (player) =>
-            {
-                const veh = player.vehicle
-
-                vehicles.destroy(veh.id)
-                user.notify(player, 'Транспорт был удален', 'warning')
-            }
-        },
-
-        'createhouse': {
-            settings: {
-                admin: enums.commandsAdmin.createhouse
-            },
-            func: player =>
-            {
-                admin.showCreateHouseMenu(player)
-            }
-        },
-        'deletehouse': {
-            settings: {
-                admin: enums.commandsAdmin.deletehouse
-            },
-            func: player =>
-            {
-                const id = houses.nearPlayer(player)
-                if(id === -1)return user.notify(player, 'Вы должны стоять возле дома/квартиры', 'error')
-
-                houses.delete(id)
-                user.notify(player, `Вы успешно удалили дом #${id}`, 'warning')
-            }
-        },
-        'edithouse': {
-            settings: {
-                admin: enums.commandsAdmin.editHouse
-            },
-            func: (player, str, [ houseID ]) =>
-            {
-                if(houseID === undefined)return user.notify(player, '/edithouse [house id]', 'error')
-                houseID = parseInt(houseID)
-
-                const id = houses.getServerID(houseID)
-                if(id === -1)return user.notify(player, `Дом с #${houseID} не найден`, 'error')
-
-                if(player.dimension !== container.get('houses', id, 'dimension'))return user.notify(player, 'Вы не можете установить гараж в данном виртуальном мире', 'error')
-                if(houses.getType(id) !== 0)return user.notify(player, 'Позицию гаража можно изменять только у домов', 'error')
-
-                container.get('houses', id, 'garage').position.x = player.position.x
-                container.get('houses', id, 'garage').position.y = player.position.y
-                container.get('houses', id, 'garage').position.z = player.position.z
-                container.get('houses', id, 'garage').position.a = player.heading
-
-                houses.refresh(id)
-                houses.save(id)
-
-                user.notify(player, `Вы успешно изменили позицию гаража у дом #${houseID}`, 'warning')
-            }
-        },
-
         'tphouse': {
             settings: {
                 admin: enums.commandsAdmin.tphouse
@@ -198,29 +129,6 @@ try
                     && container.get('houses', id, 'interior').z === 0)return user.notify(player, 'У дома/квартиры нет интерьера', 'error')
 
                 houses.tpInterior(player, id, true)
-            }
-        },
-
-        'createbiz': {
-            settings: {
-                admin: enums.commandsAdmin.createbiz
-            },
-            func: player =>
-            {
-                admin.showCreateBizMenu(player)
-            }
-        },
-        'deletebiz': {
-            settings: {
-                admin: enums.commandsAdmin.deletebiz
-            },
-            func: player =>
-            {
-                const id = biz.nearPlayer(player)
-                if(id === -1)return user.notify(player, 'Вы должны стоять возле бизнеса', 'error')
-
-                biz.delete(id)
-                user.notify(player, `Вы успешно удалили бизнес ${id}`, 'warning')
             }
         },
     })
